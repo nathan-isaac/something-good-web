@@ -7,21 +7,27 @@ class Thing extends Component {
 
     this.state = {
         thing: {
-            title: "Make a list of things you like about yourself.",
+            title: "",
             completed: false,
             color: ""
-        }
+        },
+        completedThings: [],
     };
-
   }
 
   componentWillMount() {
-    doGood.getTodaysThing((thing) => {
+    doGood.subscribe((viewModal) => {
         this.setState({
             thing: {
-                title: thing.title,
-            }
-        })
+                title: viewModal.todaysThing.title,
+                completed: viewModal.todaysThing.completed,
+            },
+            completedThings: viewModal.completedThings,
+        });
+    });
+
+    doGood.fetchTodaysThing(() => {
+        console.log('fetched todays thing');
     });
   }
 
@@ -38,10 +44,17 @@ class Thing extends Component {
   }
 
   render() {
+    const titleStyle = {
+        'textDecoration': this.state.thing.completed ? 'line-through' : '',
+    };
+    
     return (
     <div className="App">
-      <div>
+      <div style={titleStyle}>
           {this.state.thing.title}
+      </div>
+      <div>
+          {this.state.thing.completed}
       </div>
 
       <div>
@@ -50,8 +63,20 @@ class Thing extends Component {
       <div>
         <button type="button" onClick={this.onSkip}>I can't do that thing today.</button>
       </div>
+
+      <div>
+          {this.renderCompleted()}
+      </div>
     </div>
     );
+  }
+
+  renderCompleted() {
+      const completedThings = this.state.completedThings.map(thing => {
+        return <li key={thing.title}>{thing.title} - {thing.completedAt}</li>
+      });
+
+      return <ul>{completedThings}</ul>
   }
 }
 

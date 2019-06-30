@@ -1,3 +1,6 @@
 import { DoGood } from "./DoGood.js";
+import { ApiThingRepository } from "./ThingRepository.js";
 
-export const doGood = new DoGood();
+const thingRepository = new ApiThingRepository();
+
+export const doGood = new DoGood(thingRepository);
