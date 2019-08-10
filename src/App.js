@@ -1,6 +1,5 @@
 import React from 'react';
-import './App.css';
-import Thing from './components/Thing.js';
+import Thing from './views/Thing.js';
 
 function App() {
   return (
