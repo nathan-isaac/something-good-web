@@ -1,40 +1,47 @@
 import {DoGoodApplication} from "./application";
-import {NO_THINGS_FOUND} from "./response";
-import {InMemoryThingsGateway} from "./gateways";
+import {NO_TASK_FOUND} from "./response";
+import {InMemoryTodaysTaskGateway, NullTaskGateway, SAVED_TASK_STUB, TASK_STUB, TasksGatewaySpy} from "./gateways";
 
-const EXAMPLE_TITLE = 'example title';
+let taskGateway;
+let application;
+let todaysTaskGateway;
 
-describe('get today\'s thing', () => {
-  let thingsGateway;
-  let application;
+beforeEach(() => {
+  taskGateway = new TasksGatewaySpy();
+  // todaysTaskGateway = new InMemoryTodaysTaskGateway();
+  application = new DoGoodApplication(taskGateway);
+});
 
-  beforeEach(() => {
-    thingsGateway = new InMemoryThingsGateway();
-    application = new DoGoodApplication(thingsGateway);
-  });
+it('withNoThings_returnNoThingsFoundErrorCode', async () => {
+  taskGateway = new NullTaskGateway();
+  application = new DoGoodApplication(taskGateway);
 
-  it('withNoThings_returnNoThingsFoundErrorCode', (done) => {
-    application.getTodaysThing((response) => {
-      expect(response.errorCode).toBe(NO_THINGS_FOUND);
-      done();
-    });
-  });
+  const response = await application.getTodaysTask();
 
-  it('withUnCompletedThing_returnUnCompleteThing', (done) => {
-    thingsGateway.addThing({
-      title: EXAMPLE_TITLE,
-    });
+  expect(response.errorCode).toBe(NO_TASK_FOUND);
+});
 
-    application.getTodaysThing((response) => {
-      expect(response.thing).toEqual({
-        id: 1,
-        title: EXAMPLE_TITLE,
-        completed: false,
-      });
-      done();
-    });
+it('withUnCompletedThing_returnUnCompleteThing', async () => {
+  const response = await application.getTodaysTask();
+
+  expect(response.thing).toEqual({
+    id: TASK_STUB.id,
+    title: TASK_STUB.title,
+    completed: false,
   });
 });
 
-
+// it('whenTaskIsSavedForToday_DoNotGetNewTask', (done) => {
+//   todaysTaskGateway.save(SAVED_TASK_STUB);
+//
+//   application.getTodaysTask((response) => {
+//     expect(response.thing).toEqual({
+//       id: SAVED_TASK_STUB.id,
+//       title: SAVED_TASK_STUB.title,
+//       completed: false,
+//     });
+//     expect(taskGateway.getRandomTaskCalled).toBe(0);
+//     done();
+//   });
+// });
 // only get a new random thing after the day is over
