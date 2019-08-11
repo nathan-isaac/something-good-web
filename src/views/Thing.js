@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {doGood} from '../core/factory.js';
 import {COLORS} from "../colors";
+import {ENCOURAGEMENTS} from "../encouragements";
 
 class Thing extends Component {
   constructor() {
@@ -26,7 +27,7 @@ class Thing extends Component {
     });
 
     doGood.fetchTodaysThing(() => {
-      console.log('fetched todays thing');
+      console.log('fetched today\'s thing');
     });
   }
 
@@ -42,8 +43,40 @@ class Thing extends Component {
     });
   }
 
+  getRandom(itemList) {
+    return itemList[Math.floor(Math.random() * itemList.length)];
+  }
+
   getRandomColor() {
-    return COLORS[Math.floor(Math.random() * COLORS.length)];
+    return this.getRandom(COLORS);
+  }
+
+  getRandomEncouragement() {
+    return this.getRandom(ENCOURAGEMENTS);
+  }
+
+  renderActionButtons() {
+    if (this.state.thing.completed) {
+      return <p>{this.getRandomEncouragement()}</p>
+    }
+
+    return (
+      <div>
+        <button type="button"
+                onClick={this.onComplete}
+                className="block w-full bg-white text-gray-900 rounded-sm py-2 px-4"
+        >
+          I did it!
+        </button>
+
+        <button type="button"
+                onClick={this.onSkip}
+                className="block w-full py-2 px-4 mt-3"
+        >
+          I can't do that thing today.
+        </button>
+      </div>
+    );
   }
 
   render() {
@@ -57,25 +90,13 @@ class Thing extends Component {
 
     return (
       <div style={mainStyle} className="h-screen bg-blue-500 text-white flex justify-center items-center">
-        <div className="max-w-5xl min-h-screen flex flex-col justify-between py-20">
+        <div className="min-h-screen flex flex-col justify-between py-20 w-64">
           <h1 style={titleStyle} className="text-3xl">
             {this.state.thing.title}
           </h1>
 
           <div className="text-center">
-            <button type="button"
-                    onClick={this.onComplete}
-                    className="block w-full bg-white text-gray-900 rounded-sm py-2 px-4"
-            >
-              I did it!
-            </button>
-
-            <button type="button"
-                    onClick={this.onSkip}
-                    className="block w-full py-2 px-4 mt-3"
-            >
-              I can't do that thing today.
-            </button>
+            {this.renderActionButtons()}
           </div>
         </div>
       </div>
