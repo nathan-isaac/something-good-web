@@ -1,7 +1,9 @@
 import React, {Component} from "react";
-import {doGood} from '../core/factory.js';
+import {makeApplication} from '../core/factory';
 import {COLORS} from "../colors";
 import {ENCOURAGEMENTS} from "../encouragements";
+
+const app = makeApplication();
 
 class Thing extends Component {
   constructor() {
@@ -10,37 +12,42 @@ class Thing extends Component {
     this.state = {
       backgroundColor: this.getRandomColor(),
       thing: {
+        id: null,
         title: "",
         completed: false,
       },
     };
   }
 
-  componentWillMount() {
-    doGood.subscribe((viewModal) => {
-      this.setState({
-        thing: {
-          title: viewModal.todaysThing.title,
-          completed: viewModal.todaysThing.completed,
-        },
+  componentDidMount() {
+    this._asyncRequest = app.getTodaysTask()
+      .then(response => {
+        this.setState({
+          thing: {
+            id: response.task.id,
+            title: response.task.title,
+            completed: response.task.completed,
+          }
+        })
       });
-    });
+  }
 
-    doGood.fetchTodaysThing(() => {
-      console.log('fetched today\'s thing');
-    });
+  componentWillUnmount() {
+    if (this._asyncRequest) {
+      this._asyncRequest.cancel();
+    }
   }
 
   onComplete() {
-    doGood.completeThing(() => {
-      console.log('completed');
-    });
+    // doGood.completeThing(() => {
+    //   console.log('completed');
+    // });
   }
 
   onSkip() {
-    doGood.skipThing(() => {
-      console.log('skipped');
-    });
+    // doGood.skipThing(() => {
+    //   console.log('skipped');
+    // });
   }
 
   getRandom(itemList) {

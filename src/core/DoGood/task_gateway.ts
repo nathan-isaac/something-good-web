@@ -3,7 +3,7 @@ export interface TaskGateway {
 }
 
 export interface Task {
-  id: number|null,
+  id: number,
   title: string,
 }
 
@@ -43,5 +43,18 @@ export class TasksGatewaySpy implements TaskGateway {
 export class NullTaskGateway implements TaskGateway {
   getRandomTask() {
     return Promise.resolve(null);
+  }
+}
+
+export class LocalJsonTaskGateway implements TaskGateway {
+  getRandomTask(): Promise<Task | null> {
+    const tasks = require('../../data/tasks.json');
+
+    const task = tasks[Math.floor(Math.random() * tasks.length)];
+
+    return Promise.resolve({
+      id: task.id,
+      title: task.title,
+    });
   }
 }

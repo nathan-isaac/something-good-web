@@ -1,10 +1,10 @@
 import {NO_TASK_FOUND} from "./response";
-import {TaskGateway, TodaysTaskGateway} from "./gateways";
+import {TaskGateway} from "./task_gateway";
 
 export interface Response {
-  errorCode?: int,
-  thing?: {
-    id: int,
+  errorCode?: number,
+  task?: {
+    id: number,
     title: string,
     completed: boolean,
   }
@@ -27,7 +27,7 @@ export class DoGoodApplication {
     }
 
     return Promise.resolve({
-      thing: {
+      task: {
         id: thing.id,
         title: thing.title,
         completed: false,

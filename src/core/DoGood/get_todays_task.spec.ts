@@ -1,14 +1,21 @@
 import {DoGoodApplication} from "./application";
 import {NO_TASK_FOUND} from "./response";
-import {InMemoryTodaysTaskGateway, NullTaskGateway, SAVED_TASK_STUB, TASK_STUB, TasksGatewaySpy} from "./gateways";
+import {
+  InMemoryTodaysTaskGateway,
+  NullTaskGateway,
+  SAVED_TASK_STUB,
+  TASK_STUB,
+  TaskGateway,
+  TasksGatewaySpy
+} from "./task_gateway";
+import {UserTaskGateway} from "./user_task_gateway";
 
-let taskGateway;
-let application;
-let todaysTaskGateway;
+let taskGateway: TaskGateway;
+let application: DoGoodApplication;
+let userTaskGateway: UserTaskGateway;
 
 beforeEach(() => {
   taskGateway = new TasksGatewaySpy();
-  // todaysTaskGateway = new InMemoryTodaysTaskGateway();
   application = new DoGoodApplication(taskGateway);
 });
 
@@ -24,7 +31,7 @@ it('withNoThings_returnNoThingsFoundErrorCode', async () => {
 it('withUnCompletedThing_returnUnCompleteThing', async () => {
   const response = await application.getTodaysTask();
 
-  expect(response.thing).toEqual({
+  expect(response.task).toEqual({
     id: TASK_STUB.id,
     title: TASK_STUB.title,
     completed: false,
