@@ -1,9 +1,12 @@
-import {NO_TASK_FOUND} from "./response";
 import {TaskGateway} from "./task_gateway";
 import {StatusCode, UserTaskGateway} from "./user_task_gateway";
 
+export enum ResponseErrorCode {
+  NoTaskFound,
+}
+
 export interface Response {
-  errorCode?: number,
+  errorCode?: ResponseErrorCode,
   task?: {
     id: number,
     title: string,
@@ -25,13 +28,12 @@ export class DoGoodApplication {
 
     if (!thing) {
       return Promise.resolve({
-        errorCode: NO_TASK_FOUND,
+        errorCode: ResponseErrorCode.NoTaskFound,
       });
     }
 
     await this.userTaskGateway.save({
       taskId: thing.id,
-      taskTitle: thing.title,
       statusCode: StatusCode.Uncompleted,
     });
 

@@ -7,7 +7,6 @@ export enum StatusCode {
 export interface UserTask {
   id?: number,
   taskId: number,
-  taskTitle: string,
   statusCode: StatusCode,
 }
 
