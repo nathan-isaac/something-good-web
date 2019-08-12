@@ -62,3 +62,7 @@ it('withUncompletedSaveTask_ShowUncompletedTaskFromGateway', async () => {
 });
 
 // show completed if current day is the same as submitted day
+
+// What if there is more than one uncompleted task?
+
+// What if task is completed?

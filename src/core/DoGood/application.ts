@@ -3,6 +3,7 @@ import {StatusCode, UserTaskGateway} from "./user_task_gateway";
 
 export enum ResponseErrorCode {
   NoTaskFound,
+  NoUserTaskFound,
 }
 
 export interface Response {
@@ -62,6 +63,35 @@ export class DoGoodApplication {
         id: randomTask.id,
         title: randomTask.title,
         completed: false,
+      }
+    });
+  }
+
+  async completeTask(): Promise<Response> {
+    const uncompleted = await this.userTaskGateway.findUncompleted();
+
+    if (!uncompleted) {
+      return Promise.resolve({
+        errorCode: ResponseErrorCode.NoUserTaskFound,
+      });
+    }
+
+    const task = await this.taskGateway.findById(uncompleted.taskId);
+
+    if (!task) {
+      return Promise.resolve({
+        errorCode: ResponseErrorCode.NoTaskFound,
+      });
+    }
+
+    uncompleted.statusCode = StatusCode.Completed;
+    await this.userTaskGateway.save(uncompleted);
+
+    return Promise.resolve({
+      task: {
+        id: task.id,
+        title: task.title,
+        completed: true,
       }
     });
   }
