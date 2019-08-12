@@ -1,5 +1,6 @@
 import {NO_TASK_FOUND} from "./response";
 import {TaskGateway} from "./task_gateway";
+import {StatusCode, UserTaskGateway} from "./user_task_gateway";
 
 export interface Response {
   errorCode?: number,
@@ -12,8 +13,10 @@ export interface Response {
 
 export class DoGoodApplication {
   protected taskGateway: TaskGateway;
+  protected userTaskGateway: UserTaskGateway;
 
-  constructor(taskGateway: TaskGateway) {
+  constructor(taskGateway: TaskGateway, userTaskGateway: UserTaskGateway) {
+    this.userTaskGateway = userTaskGateway;
     this.taskGateway = taskGateway;
   }
 
@@ -25,6 +28,12 @@ export class DoGoodApplication {
         errorCode: NO_TASK_FOUND,
       });
     }
+
+    await this.userTaskGateway.save({
+      taskId: thing.id,
+      taskTitle: thing.title,
+      statusCode: StatusCode.Uncompleted,
+    });
 
     return Promise.resolve({
       task: {
