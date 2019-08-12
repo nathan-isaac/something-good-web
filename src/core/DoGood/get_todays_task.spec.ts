@@ -1,32 +1,34 @@
 import {DoGoodApplication, ResponseErrorCode} from "./application";
-import {NullTaskGateway, TASK_STUB, TaskGateway, TasksGatewaySpy} from "./task_gateway";
+import {InMemoryTaskGateway} from "./task_gateway";
 import {InMemoryUserTaskGateway, StatusCode, UserTaskGateway} from "./user_task_gateway";
 
-let taskGateway: TaskGateway;
-let application: DoGoodApplication;
+let taskGateway: InMemoryTaskGateway;
 let userTaskGateway: UserTaskGateway;
+let application: DoGoodApplication;
 
 beforeEach(() => {
-  taskGateway = new TasksGatewaySpy();
+  taskGateway = new InMemoryTaskGateway();
   userTaskGateway = new InMemoryUserTaskGateway();
   application = new DoGoodApplication(taskGateway, userTaskGateway);
 });
 
 it('withNoTasks_returnNoTasksFoundErrorCode', async () => {
-  taskGateway = new NullTaskGateway();
-  application = new DoGoodApplication(taskGateway, userTaskGateway);
-
   const response = await application.getTodaysTask();
 
   expect(response.errorCode).toBe(ResponseErrorCode.NoTaskFound);
 });
 
 it('withUnCompletedTask_returnUnCompleteTask', async () => {
+  await taskGateway.save({
+    id: 1,
+    title: "Sample task"
+  });
+
   const response = await application.getTodaysTask();
 
   expect(response.task).toEqual({
-    id: TASK_STUB.id,
-    title: TASK_STUB.title,
+    id: 1,
+    title: "Sample task",
     completed: false,
   });
 
@@ -34,26 +36,29 @@ it('withUnCompletedTask_returnUnCompleteTask', async () => {
 
   expect(userTasks[0]).toEqual({
     id: 1,
-    taskId: TASK_STUB.id,
+    taskId: 1,
     statusCode: StatusCode.Uncompleted,
   });
 });
 
-// it('withUncompletedSaveTask_ShowUncompletedTaskFromGateway', async () => {
-//   userTaskGateway.save({
-//     taskId: 12,
-//     taskTitle: 'Title',
-//     statusCode: StatusCode.Uncompleted,
-//   });
-//
-//   const response = await application.getTodaysTask();
-//
-//   expect(response.thing).toEqual({
-//     id: SAVED_TASK_STUB.id,
-//     title: SAVED_TASK_STUB.title,
-//     completed: false,
-//   });
-//   expect(taskGateway.getRandomTaskCalled).toBe(0);
-// });
+it('withUncompletedSaveTask_ShowUncompletedTaskFromGateway', async () => {
+  await taskGateway.save({
+    id: 12,
+    title: 'Saved task',
+  });
+
+  await userTaskGateway.save({
+    taskId: 12,
+    statusCode: StatusCode.Uncompleted,
+  });
+
+  const response = await application.getTodaysTask();
+
+  expect(response.task).toEqual({
+    id: 12,
+    title: 'Saved task',
+    completed: false,
+  });
+});
 
 // show completed if current day is the same as submitted day

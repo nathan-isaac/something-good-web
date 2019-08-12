@@ -13,6 +13,7 @@ export interface UserTask {
 export interface UserTaskGateway {
   all(): Promise<UserTask[]>;
   save(userTask: UserTask): Promise<UserTask>;
+  findUncompleted(): Promise<UserTask|null>;
 }
 
 export class InMemoryUserTaskGateway implements UserTaskGateway {
@@ -21,6 +22,18 @@ export class InMemoryUserTaskGateway implements UserTaskGateway {
 
   all(): Promise<UserTask[]> {
     return Promise.resolve(this.userTasks);
+  }
+
+  findUncompleted(): Promise<UserTask|null> {
+    const Uncompleted = this.userTasks.find((userTask) => {
+      return userTask.statusCode === StatusCode.Uncompleted;
+    });
+
+    if (!Uncompleted) {
+      return Promise.resolve(null);;
+    }
+
+    return Promise.resolve(Uncompleted);
   }
 
   save(userTask: UserTask): Promise<UserTask> {

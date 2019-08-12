@@ -1,5 +1,6 @@
 export interface TaskGateway {
   getRandomTask(): Promise<Task|null>;
+  findById(taskId: number): Promise<Task|null>;
 }
 
 export interface Task {
@@ -24,37 +25,28 @@ export class InMemoryTaskGateway implements TaskGateway {
 
     this.tasks.push(Object.assign({}, task));
   }
-}
 
-export const TASK_STUB = {
-  id: 1,
-  title: 'Sample task',
-};
+  findById(taskId: number): Promise<Task | null> {
+    const task = this.tasks.find(task => {
+      return task.id === taskId;
+    });
 
-export class TasksGatewaySpy implements TaskGateway {
-  getRandomTaskCalled = 0;
+    if (!task) {
+      return Promise.resolve(null);
+    }
 
-  getRandomTask() {
-    this.getRandomTaskCalled++;
-    return Promise.resolve(TASK_STUB);
+    return Promise.resolve(task);
   }
 }
 
-export class NullTaskGateway implements TaskGateway {
-  getRandomTask() {
-    return Promise.resolve(null);
-  }
-}
+export class LocalJsonTaskGateway extends InMemoryTaskGateway {
+  constructor() {
+    super();
 
-export class LocalJsonTaskGateway implements TaskGateway {
-  getRandomTask(): Promise<Task | null> {
     const tasks = require('../../data/tasks.json');
 
-    const task = tasks[Math.floor(Math.random() * tasks.length)];
-
-    return Promise.resolve({
-      id: task.id,
-      title: task.title,
-    });
+    tasks.forEach((task: Task) => {
+      this.save(task);
+    })
   }
 }

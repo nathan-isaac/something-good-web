@@ -24,23 +24,43 @@ export class DoGoodApplication {
   }
 
   async getTodaysTask(): Promise<Response> {
-    const thing = await this.taskGateway.getRandomTask();
+    const savedTask = await this.userTaskGateway.findUncompleted();
 
-    if (!thing) {
+    if (savedTask) {
+      const task = await this.taskGateway.findById(savedTask.taskId);
+
+      if (!task) {
+        return Promise.resolve({
+          errorCode: ResponseErrorCode.NoTaskFound,
+        });
+      }
+
+      return Promise.resolve({
+        task: {
+          id: task.id,
+          title: task.title,
+          completed: false,
+        }
+      });
+    }
+
+    const randomTask = await this.taskGateway.getRandomTask();
+
+    if (!randomTask) {
       return Promise.resolve({
         errorCode: ResponseErrorCode.NoTaskFound,
       });
     }
 
     await this.userTaskGateway.save({
-      taskId: thing.id,
+      taskId: randomTask.id,
       statusCode: StatusCode.Uncompleted,
     });
 
     return Promise.resolve({
       task: {
-        id: thing.id,
-        title: thing.title,
+        id: randomTask.id,
+        title: randomTask.title,
         completed: false,
       }
     });
