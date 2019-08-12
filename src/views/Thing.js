@@ -38,10 +38,17 @@ class Thing extends Component {
     }
   }
 
-  onComplete() {
-    // doGood.completeThing(() => {
-    //   console.log('completed');
-    // });
+  onComplete = () => {
+    app.completeTask()
+      .then(response => {
+        this.setState({
+          thing: {
+            id: response.task.id,
+            title: response.task.title,
+            completed: response.task.completed,
+          }
+        })
+      });
   }
 
   onSkip() {
