@@ -1,10 +1,11 @@
 import React, {Component} from "react";
-import {makeApplication} from '../core/factory';
+import {makeApplication, makeRandomizer} from '../core/factory';
 import {COLORS} from "../colors";
 import {ENCOURAGEMENTS} from "../encouragements";
 import {Response} from "../core/DoGood/application";
 
 const app = makeApplication();
+const randomizer = makeRandomizer();
 
 type ThingState = {
     backgroundColor: string,
@@ -66,16 +67,12 @@ class Thing extends Component<{}, ThingState> {
     })
   }
 
-  getRandom(itemList: string[]) {
-    return itemList[Math.floor(Math.random() * itemList.length)];
+  getRandomColor(): string {
+    return randomizer.getRandomItem(COLORS);
   }
 
-  getRandomColor() {
-    return this.getRandom(COLORS);
-  }
-
-  getRandomEncouragement() {
-    return this.getRandom(ENCOURAGEMENTS);
+  getRandomEncouragement(): string {
+    return randomizer.getRandomItem(ENCOURAGEMENTS);
   }
 
   render() {
