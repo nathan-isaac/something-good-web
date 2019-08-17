@@ -1,6 +1,6 @@
-import {DoGoodApplication, ResponseErrorCode} from "../application";
-import {InMemoryTaskGateway} from "../task_gateway";
-import {InMemoryUserTaskGateway, StatusCode, UserTaskGateway} from "../user_task_gateway";
+import {DoGoodApplication, ResponseErrorCode} from "../DoGood/application";
+import {InMemoryTaskGateway} from "../DoGood/task_gateway";
+import {InMemoryUserTaskGateway, StatusCode, UserTaskGateway} from "../DoGood/user_task_gateway";
 
 let taskGateway: InMemoryTaskGateway;
 let userTaskGateway: UserTaskGateway;
