@@ -9,5 +9,5 @@ insert_final_newline = true
 # max_line_length = 120
 # tab_width = 4
 
-[*.{jsx?,tsx?,js,ts,css}]
+[*.{jsx,tsx,js,ts,css}]
 indent_size = 2

@@ -2,12 +2,22 @@ import React, {Component} from "react";
 import {makeApplication} from '../core/factory';
 import {COLORS} from "../colors";
 import {ENCOURAGEMENTS} from "../encouragements";
+import {Response} from "../core/DoGood/application";
 
 const app = makeApplication();
 
-class Thing extends Component {
+type ThingState = {
+    backgroundColor: string,
+    thing: {
+        id: number|null,
+        title: string,
+        completed: boolean,
+    }
+}
+
+class Thing extends Component<{}, ThingState> {
   constructor() {
-    super();
+    super({});
 
     this.state = {
       backgroundColor: this.getRandomColor(),
@@ -20,34 +30,19 @@ class Thing extends Component {
   }
 
   componentDidMount() {
-    this._asyncRequest = app.getTodaysTask()
-      .then(response => {
-        this.setState({
-          thing: {
-            id: response.task.id,
-            title: response.task.title,
-            completed: response.task.completed,
-          }
-        })
-      });
+    app.getTodaysTask()
+    .then(response => {
+      this.setResponseState(response);
+    });
   }
 
   componentWillUnmount() {
-    if (this._asyncRequest) {
-      this._asyncRequest.cancel();
-    }
   }
 
   onComplete = () => {
     app.completeTask()
       .then(response => {
-        this.setState({
-          thing: {
-            id: response.task.id,
-            title: response.task.title,
-            completed: response.task.completed,
-          }
-        })
+        this.setResponseState(response);
       });
   }
 
@@ -57,7 +52,21 @@ class Thing extends Component {
     // });
   }
 
-  getRandom(itemList) {
+  setResponseState(response: Response) {
+    if (!response.task) {
+      return;
+    }
+
+    this.setState({
+      thing: {
+        id: response.task.id,
+        title: response.task.title,
+        completed: response.task.completed,
+      }
+    })
+  }
+
+  getRandom(itemList: string[]) {
     return itemList[Math.floor(Math.random() * itemList.length)];
   }
 
@@ -67,30 +76,6 @@ class Thing extends Component {
 
   getRandomEncouragement() {
     return this.getRandom(ENCOURAGEMENTS);
-  }
-
-  renderActionButtons() {
-    if (this.state.thing.completed) {
-      return <p>{this.getRandomEncouragement()}</p>
-    }
-
-    return (
-      <div>
-        <button type="button"
-                onClick={this.onComplete}
-                className="block w-full bg-white text-gray-900 rounded-sm py-2 px-4"
-        >
-          I did it!
-        </button>
-
-        <button type="button"
-                onClick={this.onSkip}
-                className="block w-full py-2 px-4 mt-3"
-        >
-          I can't do that thing today.
-        </button>
-      </div>
-    );
   }
 
   render() {
@@ -113,6 +98,30 @@ class Thing extends Component {
             {this.renderActionButtons()}
           </div>
         </div>
+      </div>
+    );
+  }
+
+  renderActionButtons() {
+    if (this.state.thing.completed) {
+      return <p>{this.getRandomEncouragement()}</p>
+    }
+
+    return (
+      <div>
+        <button type="button"
+                onClick={this.onComplete}
+                className="block w-full bg-white text-gray-900 rounded-sm py-2 px-4"
+        >
+          I did it!
+        </button>
+
+        <button type="button"
+                onClick={this.onSkip}
+                className="block w-full py-2 px-4 mt-3"
+        >
+          I can't do that thing today.
+        </button>
       </div>
     );
   }

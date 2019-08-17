@@ -1,5 +1,5 @@
 import React from 'react';
-import Thing from './views/Thing.js';
+import Thing from './views/Thing.tsx';
 
 function App() {
   return (
