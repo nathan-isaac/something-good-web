@@ -1,11 +1,9 @@
 import React, {Component} from "react";
-import {makeApplication, makeRandomizer} from '../core/factory';
+import {DoGoodApplicationFactory, RandomizerFactory} from '../core/factory';
 import {COLORS} from "../colors";
 import {ENCOURAGEMENTS} from "../encouragements";
-import {Response} from "../core/DoGood/application";
-
-const app = makeApplication();
-const randomizer = makeRandomizer();
+import {DoGoodApplication, Response} from "../core/DoGood/application";
+import {Randomizer} from "../core/randomizer";
 
 type ThingState = {
     backgroundColor: string,
@@ -17,8 +15,15 @@ type ThingState = {
 }
 
 class Thing extends Component<{}, ThingState> {
+  private app: DoGoodApplication;
+  private randomizer: Randomizer;
+
   constructor() {
     super({});
+
+    this.app = DoGoodApplicationFactory.getInstance();
+    this.randomizer = RandomizerFactory.getInstance();
+
 
     this.state = {
       backgroundColor: this.getRandomColor(),
@@ -31,7 +36,7 @@ class Thing extends Component<{}, ThingState> {
   }
 
   componentDidMount() {
-    app.getTodaysTask()
+    this.app.getTodaysTask()
     .then(response => {
       this.setResponseState(response);
     });
@@ -41,14 +46,14 @@ class Thing extends Component<{}, ThingState> {
   }
 
   onComplete = () => {
-    app.completeTask()
+    this.app.completeTask()
       .then(response => {
         this.setResponseState(response);
       });
   }
 
   onSkip = () => {
-    app.skipTask()
+    this.app.skipTask()
       .then(response => {
         this.setResponseState(response);
       });
@@ -69,11 +74,11 @@ class Thing extends Component<{}, ThingState> {
   }
 
   getRandomColor(): string {
-    return randomizer.getRandomItem(COLORS);
+    return this.randomizer.getRandomItem(COLORS);
   }
 
   getRandomEncouragement(): string {
-    return randomizer.getRandomItem(ENCOURAGEMENTS);
+    return this.randomizer.getRandomItem(ENCOURAGEMENTS);
   }
 
   render() {
