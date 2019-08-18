@@ -1,13 +1,16 @@
-import {DoGoodApplication, ResponseErrorCode} from "../DoGood/application";
-import {InMemoryTaskGateway} from "../DoGood/task_gateway";
-import {InMemoryUserTaskGateway, StatusCode, UserTaskGateway} from "../DoGood/user_task_gateway";
+import {DoGoodApplication, ResponseErrorCode} from "../application";
+import {InMemoryTaskGateway} from "../task_gateway";
+import {InMemoryUserTaskGateway, StatusCode, UserTaskGateway} from "../user_task_gateway";
+import {Randomizer, RandomizerStub} from "../../randomizer";
 
 let taskGateway: InMemoryTaskGateway;
 let userTaskGateway: UserTaskGateway;
 let application: DoGoodApplication;
+let randomizer: Randomizer;
 
 beforeEach(() => {
-  taskGateway = new InMemoryTaskGateway();
+  randomizer = new RandomizerStub();
+  taskGateway = new InMemoryTaskGateway(randomizer);
   userTaskGateway = new InMemoryUserTaskGateway();
   application = new DoGoodApplication(taskGateway, userTaskGateway);
 });

@@ -47,10 +47,11 @@ class Thing extends Component<{}, ThingState> {
       });
   }
 
-  onSkip() {
-    // doGood.skipThing(() => {
-    //   console.log('skipped');
-    // });
+  onSkip = () => {
+    app.skipTask()
+      .then(response => {
+        this.setResponseState(response);
+      });
   }
 
   setResponseState(response: Response) {

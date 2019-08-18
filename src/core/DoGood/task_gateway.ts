@@ -1,5 +1,7 @@
+import {Randomizer} from "../randomizer";
+
 export interface TaskGateway {
-  getRandomTask(): Promise<Task|null>;
+  getRandomTask(): Promise<Task|undefined>;
   findById(taskId: number): Promise<Task|null>;
 }
 
@@ -11,9 +13,14 @@ export interface Task {
 export class InMemoryTaskGateway implements TaskGateway {
   protected tasks: Task[] = [];
   protected id: number = 1;
+  protected randomize: Randomizer;
 
-  getRandomTask(): Promise<Task|null> {
-    const task = this.tasks[Math.floor(Math.random() * this.tasks.length)];
+  constructor(randomize: Randomizer) {
+    this.randomize = randomize;
+  }
+
+  getRandomTask(): Promise<Task|undefined> {
+    const task = this.randomize.getRandomItem(this.tasks);
     return Promise.resolve(task);
   }
 
@@ -40,8 +47,8 @@ export class InMemoryTaskGateway implements TaskGateway {
 }
 
 export class LocalJsonTaskGateway extends InMemoryTaskGateway {
-  constructor() {
-    super();
+  constructor(randomizer: Randomizer) {
+    super(randomizer);
 
     const tasks = require('../../data/tasks.json');
 

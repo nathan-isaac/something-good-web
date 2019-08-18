@@ -1,10 +1,10 @@
 
 export interface Randomizer {
-  getRandomItem(items: string[]) : string|undefined;
+  getRandomItem(items: any[]): any;
 }
 
 export class MathRandomizer implements Randomizer {
-  getRandomItem(items: string[]): string|undefined {
+  getRandomItem(items: any[]): any {
     return items[Math.floor(Math.random() * items.length)];
   }
 }
@@ -12,7 +12,7 @@ export class MathRandomizer implements Randomizer {
 export class RandomizerStub implements Randomizer {
   public randomIndex: number = 0;
 
-  getRandomItem(items: string[]): string|undefined {
+  getRandomItem(items: any[]): any {
     return items[this.randomIndex];
   }
 }

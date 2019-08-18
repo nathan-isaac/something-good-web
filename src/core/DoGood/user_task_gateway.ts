@@ -36,16 +36,30 @@ export class InMemoryUserTaskGateway implements UserTaskGateway {
     return Promise.resolve(Uncompleted);
   }
 
-  save(userTask: UserTask): Promise<UserTask> {
+  async save(userTask: UserTask): Promise<UserTask> {
     if (!userTask.id) {
       userTask.id = this.index;
       this.index++;
     }
 
-    const clonedUserTask = Object.assign({}, userTask);
+    const task = await this.findById(userTask.id);
 
-    this.userTasks.push(clonedUserTask);
+    if (task) {
+      Object.assign(task, userTask);
+      return Promise.resolve(task);
+    } else {
+      const newTask = Object.assign({}, userTask);
+      this.userTasks.push(newTask);
+      return Promise.resolve(newTask);
+    }
 
-    return Promise.resolve(clonedUserTask);
+  }
+
+  protected async findById(id: number): Promise<UserTask | undefined> {
+    const task = this.userTasks.find(task => {
+      return task.id === id;
+    });
+
+    return Promise.resolve(task);
   }
 }

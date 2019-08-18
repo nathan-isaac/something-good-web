@@ -45,6 +45,10 @@ export class DoGoodApplication {
       });
     }
 
+    return this.getNewTask();
+  }
+
+  async getNewTask() {
     const randomTask = await this.taskGateway.getRandomTask();
 
     if (!randomTask) {
@@ -94,5 +98,28 @@ export class DoGoodApplication {
         completed: true,
       }
     });
+  }
+
+  async skipTask() {
+    const uncompleted = await this.userTaskGateway.findUncompleted();
+
+    if (!uncompleted) {
+      return Promise.resolve({
+        errorCode: ResponseErrorCode.NoUserTaskFound,
+      });
+    }
+
+    const task = await this.taskGateway.findById(uncompleted.taskId);
+
+    if (!task) {
+      return Promise.resolve({
+        errorCode: ResponseErrorCode.NoTaskFound,
+      });
+    }
+
+    uncompleted.statusCode = StatusCode.Skipped;
+    await this.userTaskGateway.save(uncompleted);
+
+    return this.getNewTask();
   }
 }
