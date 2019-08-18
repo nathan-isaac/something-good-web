@@ -20,10 +20,8 @@ class Thing extends Component<{}, ThingState> {
 
   constructor() {
     super({});
-
     this.app = DoGoodApplicationFactory.getInstance();
     this.randomizer = RandomizerFactory.getInstance();
-
 
     this.state = {
       backgroundColor: this.getRandomColor(),
@@ -45,6 +43,11 @@ class Thing extends Component<{}, ThingState> {
   componentWillUnmount() {
   }
 
+  // TODO: add refresh button
+  onRefresh = () => {
+    console.log('refresh today\'s task');
+  }
+
   onComplete = () => {
     this.app.completeTask()
       .then(response => {
@@ -60,6 +63,8 @@ class Thing extends Component<{}, ThingState> {
   }
 
   setResponseState(response: Response) {
+    // TODO: check error states
+
     if (!response.task) {
       return;
     }
