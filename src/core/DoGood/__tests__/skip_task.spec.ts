@@ -6,9 +6,11 @@ import {RandomizerStub} from "../../randomizer";
 let taskGateway: InMemoryTaskGateway;
 let userTaskGateway: UserTaskGateway;
 let application: DoGoodApplication;
+let randomizer: RandomizerStub;
 
 beforeEach(() => {
-  taskGateway = new InMemoryTaskGateway(new RandomizerStub());
+  randomizer = new RandomizerStub();
+  taskGateway = new InMemoryTaskGateway(randomizer);
   userTaskGateway = new InMemoryUserTaskGateway();
   application = new DoGoodApplication(taskGateway, userTaskGateway);
 });
@@ -34,7 +36,9 @@ it('withUserTaskButNoTasks_ReturnNoTaskResponseCode', async () => {
   });
 });
 
-it('withUerTaskAndTask_SkipUserTask', async () => {
+it('withUserTaskAndTask_SkipUserTask', async () => {
+  randomizer.randomIndex = 1;
+  
   await userTaskGateway.save({
     taskId: 12,
     statusCode: StatusCode.Uncompleted,
@@ -44,13 +48,17 @@ it('withUerTaskAndTask_SkipUserTask', async () => {
     id: 12,
     title: 'Title',
   });
+  await taskGateway.save({
+    id: 13,
+    title: 'Other Title',
+  });
 
   const response = await application.skipTask();
 
   expect(response).toEqual({
     task: {
-      id: 12,
-      title: 'Title',
+      id: 13,
+      title: 'Other Title',
       completed: false,
     }
   });
@@ -64,7 +72,7 @@ it('withUerTaskAndTask_SkipUserTask', async () => {
   });
   expect(userTasks[1]).toEqual({
     id: 2,
-    taskId: 12,
+    taskId: 13,
     statusCode: StatusCode.Uncompleted,
   });
   expect(userTasks.length).toBe(2);

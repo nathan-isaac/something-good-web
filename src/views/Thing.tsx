@@ -18,8 +18,8 @@ class Thing extends Component<{}, ThingState> {
   private app: DoGoodApplication;
   private randomizer: Randomizer;
 
-  constructor() {
-    super({});
+  constructor(props = {}) {
+    super(props);
     this.app = DoGoodApplicationFactory.getInstance();
     this.randomizer = RandomizerFactory.getInstance();
 
@@ -35,9 +35,9 @@ class Thing extends Component<{}, ThingState> {
 
   componentDidMount() {
     this.app.getTodaysTask()
-    .then(response => {
-      this.setResponseState(response);
-    });
+      .then(response => {
+        this.setResponseState(response);
+      });
   }
 
   componentWillUnmount() {
@@ -59,6 +59,9 @@ class Thing extends Component<{}, ThingState> {
     this.app.skipTask()
       .then(response => {
         this.setResponseState(response);
+        this.setState({
+          backgroundColor: this.getRandomColor(),
+        });
       });
   }
 
