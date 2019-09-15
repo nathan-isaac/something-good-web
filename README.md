@@ -1,6 +1,22 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
 [![CircleCI](https://circleci.com/gh/nathanjisaac/something-good-web.svg?style=svg)](https://circleci.com/gh/nathanjisaac/something-good-web)
+
+## Architecture
+
+- UI
+- Use Cases
+- Gateways
+
+### UI
+
+The UI layer is only pulling data from use cases. In short the UI layer is mainly mapping use case data to reactjs state. No business logic in this layer. 
+
+### Use Cases
+
+Use cases include the core logic of the app. 
+
+### Gateways
+
+TODO...
 
 ## Available Scripts
 
