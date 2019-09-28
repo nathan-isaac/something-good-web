@@ -1,12 +1,10 @@
 import React, {Component} from "react";
-import {DoGoodApplicationFactory, RandomizerFactory} from '../core/factory';
-import {COLORS} from "../colors";
-import {ENCOURAGEMENTS} from "../encouragements";
-import {DoGoodApplication, Response} from "../core/DoGood/application";
-import {Randomizer} from "../core/randomizer";
+import {DoGoodApplication, Response} from "./application";
+import {DoGoodApplicationFactory} from "./factory";
 
 type TaskState = {
     backgroundColor: string,
+    encouragement: string,
     thing: {
         id: number|null,
         title: string,
@@ -16,15 +14,14 @@ type TaskState = {
 
 class Task extends Component<{}, TaskState> {
   private app: DoGoodApplication;
-  private randomizer: Randomizer;
 
   constructor(props = {}) {
     super(props);
     this.app = DoGoodApplicationFactory.getInstance();
-    this.randomizer = RandomizerFactory.getInstance();
 
     this.state = {
-      backgroundColor: this.getRandomColor(),
+      backgroundColor: "",
+      encouragement: "",
       thing: {
         id: null,
         title: "",
@@ -59,9 +56,6 @@ class Task extends Component<{}, TaskState> {
     this.app.skipTask()
       .then(response => {
         this.setResponseState(response);
-        this.setState({
-          backgroundColor: this.getRandomColor(),
-        });
       });
   }
 
@@ -73,20 +67,14 @@ class Task extends Component<{}, TaskState> {
     }
 
     this.setState({
+      backgroundColor: response.color || "",
+      encouragement: response.encouragement || "",
       thing: {
         id: response.task.id,
         title: response.task.title,
         completed: response.task.completed,
       }
     })
-  }
-
-  getRandomColor(): string {
-    return this.randomizer.getRandomItem(COLORS);
-  }
-
-  getRandomEncouragement(): string {
-    return this.randomizer.getRandomItem(ENCOURAGEMENTS);
   }
 
   render() {
@@ -115,7 +103,7 @@ class Task extends Component<{}, TaskState> {
 
   renderActionButtons() {
     if (this.state.thing.completed) {
-      return <p>{this.getRandomEncouragement()}</p>
+      return <p>{this.state.encouragement}</p>
     }
 
     return (
@@ -131,7 +119,7 @@ class Task extends Component<{}, TaskState> {
                 onClick={this.onSkip}
                 className="block w-full py-2 px-4 mt-3"
         >
-          I can't do that thing today.
+          I can't do this today.
         </button>
       </div>
     );

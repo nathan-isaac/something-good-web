@@ -1,4 +1,4 @@
-import {Randomizer} from "../randomizer";
+import {Randomizer} from "./randomizer";
 
 export interface TaskGateway {
   getRandomTask(): Promise<Task|undefined>;
@@ -50,7 +50,7 @@ export class LocalJsonTaskGateway extends InMemoryTaskGateway {
   constructor(randomizer: Randomizer) {
     super(randomizer);
 
-    const tasks = require('../../data/tasks.json');
+    const tasks = require('../data/tasks.json');
 
     tasks.forEach((task: Task) => {
       this.save(task);

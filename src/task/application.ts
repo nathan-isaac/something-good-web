@@ -8,6 +8,8 @@ export enum ResponseErrorCode {
 
 export interface Response {
   errorCode?: ResponseErrorCode,
+  color?: string,
+  encouragement?: string,
   task?: {
     id: number,
     title: string,
@@ -17,9 +19,13 @@ export interface Response {
 
 export class DoGoodApplication {
   protected taskGateway: TaskGateway;
+  protected colors: string[] = [];
+  protected encouragements: string[] = [];
   protected userTaskGateway: UserTaskGateway;
 
-  constructor(taskGateway: TaskGateway, userTaskGateway: UserTaskGateway) {
+  constructor(taskGateway: TaskGateway, userTaskGateway: UserTaskGateway, colors: string[] = [], encouragements: string[] = []) {
+    this.colors = colors;
+    this.encouragements = encouragements;
     this.userTaskGateway = userTaskGateway;
     this.taskGateway = taskGateway;
   }
@@ -37,6 +43,8 @@ export class DoGoodApplication {
       }
 
       return Promise.resolve({
+        color: this.colors[0],
+        encouragement: this.encouragements[0],
         task: {
           id: task.id,
           title: task.title,
@@ -63,6 +71,8 @@ export class DoGoodApplication {
     });
 
     return Promise.resolve({
+      color: this.colors[0],
+      encouragement: this.encouragements[0],
       task: {
         id: randomTask.id,
         title: randomTask.title,
@@ -92,6 +102,8 @@ export class DoGoodApplication {
     await this.userTaskGateway.save(uncompleted);
 
     return Promise.resolve({
+      color: this.colors[0],
+      encouragement: this.encouragements[0],
       task: {
         id: task.id,
         title: task.title,
