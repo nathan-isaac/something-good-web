@@ -5,7 +5,7 @@ import {ENCOURAGEMENTS} from "../encouragements";
 import {DoGoodApplication, Response} from "../core/DoGood/application";
 import {Randomizer} from "../core/randomizer";
 
-type ThingState = {
+type TaskState = {
     backgroundColor: string,
     thing: {
         id: number|null,
@@ -14,7 +14,7 @@ type ThingState = {
     }
 }
 
-class Thing extends Component<{}, ThingState> {
+class Task extends Component<{}, TaskState> {
   private app: DoGoodApplication;
   private randomizer: Randomizer;
 
@@ -138,4 +138,4 @@ class Thing extends Component<{}, ThingState> {
   }
 }
 
-export default Thing;
+export default Task;
