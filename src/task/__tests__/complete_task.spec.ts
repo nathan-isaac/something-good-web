@@ -1,15 +1,22 @@
 import {DoGoodApplication, ResponseErrorCode} from "../application";
 import {InMemoryTaskGateway} from "../task_gateway";
 import {InMemoryUserTaskGateway, StatusCode, UserTaskGateway} from "../user_task_gateway";
+import {ColorGatewayStub} from "../color_gateway";
+import {EncouragementGatewayStub} from "../encouragement_gateway";
 
 let taskGateway: InMemoryTaskGateway;
 let userTaskGateway: UserTaskGateway;
 let application: DoGoodApplication;
+let color_gateway: ColorGatewayStub;
+let encouragement_gateway: EncouragementGatewayStub;
+
 
 beforeEach(() => {
   taskGateway = new InMemoryTaskGateway();
   userTaskGateway = new InMemoryUserTaskGateway();
-  application = new DoGoodApplication(taskGateway, userTaskGateway);
+  color_gateway = new ColorGatewayStub();
+  encouragement_gateway = new EncouragementGatewayStub();
+  application = new DoGoodApplication(taskGateway, userTaskGateway, color_gateway, encouragement_gateway);
 });
 
 it('withNoUserTask_ReturnNotUserTaskResponseCode', async () => {
@@ -43,6 +50,8 @@ it('withUerTaskAndTask_CompleteUserTask', async () => {
   const response = await application.completeTask();
 
   expect(response).toEqual({
+    color: 'color',
+    encouragement: 'encouragement',
     task: {
       id: 12,
       title: 'Title',

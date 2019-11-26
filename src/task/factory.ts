@@ -1,7 +1,9 @@
 import {DoGoodApplication} from "./application";
-import {MathRandomizer, Randomizer} from "./randomizer";
+import {MathRandomizer} from "./randomizer";
 import {LocalJsonTaskGateway} from "./task_gateway";
 import {InMemoryUserTaskGateway} from "./user_task_gateway";
+import {ArrayColorGateway} from "./color_gateway";
+import {ArrayEncouragementGateway} from "./encouragement_gateway";
 
 const COLORS: string[] = [
   "#442B48",
@@ -30,24 +32,13 @@ export class DoGoodApplicationFactory {
 
   static getInstance(): DoGoodApplication {
     if (!DoGoodApplicationFactory.instance) {
-      const randomizer = new MathRandomizer();
-      const taskGateway = new LocalJsonTaskGateway(randomizer);
+      const taskGateway = new LocalJsonTaskGateway(new MathRandomizer());
       const userTaskGateway = new InMemoryUserTaskGateway();
-      DoGoodApplicationFactory.instance = new DoGoodApplication(taskGateway, userTaskGateway, COLORS, ENCOURAGEMENTS);
+      const color_gateway = new ArrayColorGateway(COLORS, new MathRandomizer());
+      const encouragement_gateway = new ArrayEncouragementGateway(ENCOURAGEMENTS, new MathRandomizer());
+      DoGoodApplicationFactory.instance = new DoGoodApplication(taskGateway, userTaskGateway, color_gateway, encouragement_gateway);
     }
 
     return DoGoodApplicationFactory.instance;
-  }
-}
-
-export class RandomizerFactory {
-  protected static instance: Randomizer;
-
-  static getInstance(): Randomizer {
-    if (!RandomizerFactory.instance) {
-      RandomizerFactory.instance = new MathRandomizer();
-    }
-
-    return RandomizerFactory.instance;
   }
 }

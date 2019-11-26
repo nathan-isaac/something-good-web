@@ -1,5 +1,7 @@
 import {TaskGateway} from "./task_gateway";
 import {StatusCode, UserTaskGateway} from "./user_task_gateway";
+import {ColorGateway} from "./color_gateway";
+import {EncouragementGateway} from "./encouragement_gateway";
 
 export enum ResponseErrorCode {
   NoTaskFound,
@@ -19,13 +21,13 @@ export interface Response {
 
 export class DoGoodApplication {
   protected taskGateway: TaskGateway;
-  protected colors: string[] = [];
-  protected encouragements: string[] = [];
+  protected encouragement_gateway: EncouragementGateway;
+  protected color_gateway: ColorGateway;
   protected userTaskGateway: UserTaskGateway;
 
-  constructor(taskGateway: TaskGateway, userTaskGateway: UserTaskGateway, colors: string[] = [], encouragements: string[] = []) {
-    this.colors = colors;
-    this.encouragements = encouragements;
+  constructor(taskGateway: TaskGateway, userTaskGateway: UserTaskGateway, color_gateway: ColorGateway, encouragement_gateway: EncouragementGateway) {
+    this.encouragement_gateway = encouragement_gateway;
+    this.color_gateway = color_gateway;
     this.userTaskGateway = userTaskGateway;
     this.taskGateway = taskGateway;
   }
@@ -42,9 +44,12 @@ export class DoGoodApplication {
         });
       }
 
+      const color = await this.color_gateway.get_random_color();
+      const encouragement = await this.encouragement_gateway.get_random_encouragement();
+
       return Promise.resolve({
-        color: this.colors[0],
-        encouragement: this.encouragements[0],
+        color: color,
+        encouragement: encouragement,
         task: {
           id: task.id,
           title: task.title,
@@ -70,9 +75,12 @@ export class DoGoodApplication {
       statusCode: StatusCode.Uncompleted,
     });
 
+    const color = await this.color_gateway.get_random_color();
+    const encouragement = await this.encouragement_gateway.get_random_encouragement();
+
     return Promise.resolve({
-      color: this.colors[0],
-      encouragement: this.encouragements[0],
+      color: color,
+      encouragement: encouragement,
       task: {
         id: randomTask.id,
         title: randomTask.title,
@@ -101,9 +109,12 @@ export class DoGoodApplication {
     uncompleted.statusCode = StatusCode.Completed;
     await this.userTaskGateway.save(uncompleted);
 
+    const color = await this.color_gateway.get_random_color();
+    const encouragement = await this.encouragement_gateway.get_random_encouragement();
+
     return Promise.resolve({
-      color: this.colors[0],
-      encouragement: this.encouragements[0],
+      color: color,
+      encouragement: encouragement,
       task: {
         id: task.id,
         title: task.title,

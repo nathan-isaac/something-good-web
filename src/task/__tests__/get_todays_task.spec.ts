@@ -2,17 +2,23 @@ import {DoGoodApplication, ResponseErrorCode} from "../application";
 import {InMemoryTaskGateway} from "../task_gateway";
 import {InMemoryUserTaskGateway, StatusCode, UserTaskGateway} from "../user_task_gateway";
 import {Randomizer, RandomizerStub} from "../randomizer";
+import {ColorGatewayStub} from "../color_gateway";
+import {EncouragementGatewayStub} from "../encouragement_gateway";
 
 let taskGateway: InMemoryTaskGateway;
 let userTaskGateway: UserTaskGateway;
 let application: DoGoodApplication;
 let randomizer: Randomizer;
+let color_gateway: ColorGatewayStub;
+let encouragement_gateway: EncouragementGatewayStub;
 
 beforeEach(() => {
   randomizer = new RandomizerStub();
   taskGateway = new InMemoryTaskGateway(randomizer);
   userTaskGateway = new InMemoryUserTaskGateway();
-  application = new DoGoodApplication(taskGateway, userTaskGateway);
+  color_gateway = new ColorGatewayStub();
+  encouragement_gateway = new EncouragementGatewayStub();
+  application = new DoGoodApplication(taskGateway, userTaskGateway, color_gateway, encouragement_gateway);
 });
 
 it('withNoTasks_returnNoTasksFoundErrorCode', async () => {
@@ -22,21 +28,21 @@ it('withNoTasks_returnNoTasksFoundErrorCode', async () => {
 });
 
 it('withUnCompletedTask_returnUnCompleteTask', async () => {
+  color_gateway.set_color('color');
   await taskGateway.save({
     id: 1,
     title: "Sample task"
   });
 
   const response = await application.getTodaysTask();
+  const userTasks = await userTaskGateway.all();
 
   expect(response.task).toEqual({
     id: 1,
     title: "Sample task",
     completed: false,
   });
-
-  const userTasks = await userTaskGateway.all();
-
+  expect(response.color).toBe('color');
   expect(userTasks[0]).toEqual({
     id: 1,
     taskId: 1,
