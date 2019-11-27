@@ -1,6 +1,6 @@
 
 // maybe make object with hex, rgb attributes?
-import {MathRandomizer, Randomizer} from "./randomizer";
+import {Randomizer} from "./randomizer";
 
 export type Color = string;
 

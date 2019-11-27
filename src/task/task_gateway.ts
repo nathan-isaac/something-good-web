@@ -2,7 +2,7 @@ import {Randomizer} from "./randomizer";
 
 export interface TaskGateway {
   getRandomTask(): Promise<Task|undefined>;
-  findById(taskId: number): Promise<Task|null>;
+  findById(taskId: number): Promise<Task|undefined>;
 }
 
 export interface Task {

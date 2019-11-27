@@ -8,14 +8,17 @@ export enum ResponseErrorCode {
   NoUserTaskFound,
 }
 
-export interface Response {
-  errorCode?: ResponseErrorCode,
-  color?: string,
+export type ErrorResponse = {
+  errorCode: ResponseErrorCode,
+}
+
+export type Response = {
   encouragement?: string,
-  task?: {
+  task: {
     id: number,
     title: string,
     completed: boolean,
+    color: string,
   }
 }
 
@@ -32,33 +35,36 @@ export class DoGoodApplication {
     this.taskGateway = taskGateway;
   }
 
-  async getTodaysTask(): Promise<Response> {
-    const savedTask = await this.userTaskGateway.findUncompleted();
+  async getTodaysTask(): Promise<ErrorResponse|Response> {
+    return Promise.resolve({
+      errorCode: ResponseErrorCode.NoTaskFound
+    });
+    // const savedTask = await this.userTaskGateway.findUncompleted();
 
-    if (savedTask) {
-      const task = await this.taskGateway.findById(savedTask.taskId);
+    // if (savedTask) {
+    //   const task = await this.taskGateway.findById(savedTask.taskId);
 
-      if (!task) {
-        return Promise.resolve({
-          errorCode: ResponseErrorCode.NoTaskFound,
-        });
-      }
+    //   if (!task) {
+    //     return Promise.resolve({
+    //       errorCode: ResponseErrorCode.NoTaskFound,
+    //     });
+    //   }
 
-      const color = await this.color_gateway.get_random_color();
-      const encouragement = await this.encouragement_gateway.get_random_encouragement();
+    //   const color = await this.color_gateway.get_random_color();
+    //   const encouragement = await this.encouragement_gateway.get_random_encouragement();
 
-      return Promise.resolve({
-        color: color,
-        encouragement: encouragement,
-        task: {
-          id: task.id,
-          title: task.title,
-          completed: false,
-        }
-      });
-    }
+    //   return Promise.resolve({
+    //     color: color,
+    //     encouragement: encouragement,
+    //     task: {
+    //       id: task.id,
+    //       title: task.title,
+    //       completed: false,
+    //     }
+    //   });
+    // }
 
-    return this.getNewTask();
+    // return this.getNewTask();
   }
 
   async getNewTask() {
