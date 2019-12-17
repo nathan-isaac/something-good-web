@@ -21,6 +21,7 @@ beforeEach(() => {
   application = new DoGoodApplication(taskGateway, userTaskGateway, color_gateway, encouragement_gateway);
 });
 
+// I think this should throw an error because the intent is that there will always be a task to complete
 it('returns no task found when there are no tasks', async () => {
   const response = await application.getTodaysTask();
 
