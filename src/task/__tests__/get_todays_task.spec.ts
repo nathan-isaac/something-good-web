@@ -39,9 +39,93 @@ it('returns no task found when there are no tasks', async () => {
 
 // active_task, tasks, task_history
 
-it ('sets active task from gateway if no active task is set', () => {});
+// define generic task
+  // try to set task in app
+  // check newly-set task
+   // check that it has new activeTask properties
 
-it ('doesn’t change active task if active task is from today', () => {});
+// getTask (from gateway)
+  // getActiveTask (from activeTask gateway)
+  // convertToActiveTask (from activeTaskGateway)
+  
+  // getTodaysTask (business logic, interfaces with current user app state)
+    // might use above functions... if no task:
+      // getTask
+      // convertToActiveTask
+      // setTodaysTask with the above activeTask
+      // trigger state update
+
+
+// tests the app state/storage of task
+it ('get fresh active task from taskGateway', () => {
+  color_gateway.set_color('#000000');
+  taskGateway.setRandomTask({
+    id: 1,
+    title: 'new task'
+  });
+
+  const response = await application.getTodaysTask();
+
+  // expect new task in active task gateway
+  // what about color? 
+  // where do we include the encoragement
+
+  // only return what the view layer needs?
+  expect(response.activeTask).toEqual({
+    title: 'new task',
+    color: '#000000',
+    completed: true,
+    encouragement: 'You are awesome!',
+  });
+
+  const activeTasks = activeTaskGateway.all();
+
+  expect(activeTasks.length).toBe(1);
+  // saved active task
+  expect(activeTasks[0]).toEqual({
+    id: 1,
+    title: 'new task',
+    color: '#000000',
+    completedAt: new Date(),
+    retrievedAt: new Date(),
+    encouragement: undefined,
+  });
+
+  
+});
+
+// tests 
+it ('sets task as activeTask in app', () => {
+  // define unique, static task
+  // set activeTask in app with setActiveTask()
+  // retrieve activeTask from app, and verify that it’s there (has it changed?)
+});
+
+// tests task gateway
+it ('gets new task from gateway', () => {
+  // get new task from gateway
+  // inspect for task-like appearance
+});
+
+it ('doesn’t change active task if active task is from today', () => {
+  // set active task to something unique for the test (not in the gateway list)
+    // set task date to today
+  // run whatever code would grab a new task ???
+  // check to make sure active task is the same
+});
+
+it ('changes active task if active task is not from today', () => {
+  // set active task to something unique for the test (not in the gateway list)
+    // set task date to yesterday
+  // run whatever code would grab a new task ???
+  // check to make sure active task is not the same
+});
+
+it ('tries to get a new task if no active task is set', () => {
+  // leave active task unset
+  // run whatever code would grab a new task ???
+  // check to make sure active task is task-like
+});
 
 fit('sets active task as a new uncompleted task if the current active task is not from today', async () => {
   color_gateway.set_color('color');

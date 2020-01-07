@@ -67,13 +67,7 @@ class Task extends Component<{}, TaskState> {
     }
 
     this.setState({
-      backgroundColor: response.color || "",
-      encouragement: response.encouragement || "",
-      thing: {
-        id: response.task.id,
-        title: response.task.title,
-        completed: response.task.completed,
-      }
+      task: response.task
     })
   }
 
@@ -102,7 +96,7 @@ class Task extends Component<{}, TaskState> {
   }
 
   renderActionButtons() {
-    if (this.state.thing.completed) {
+    if (this.state.encouragement) {
       return <p>{this.state.encouragement}</p>
     }
 
