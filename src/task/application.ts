@@ -1,7 +1,7 @@
-import {TaskGateway} from "./task_gateway";
+import {TaskGateway} from "./gateways/task_gateway";
 import {StatusCode, UserTaskGateway} from "./user_task_gateway";
-import {ColorGateway} from "./color_gateway";
-import {EncouragementGateway} from "./encouragement_gateway";
+import {ColorGateway} from "./gateways/color_gateway";
+import {EncouragementGateway} from "./gateways/encouragement_gateway";
 
 export enum ResponseErrorCode {
   NoTaskFound,
@@ -29,10 +29,10 @@ export class DoGoodApplication {
   protected userTaskGateway: UserTaskGateway;
 
   constructor(taskGateway: TaskGateway, userTaskGateway: UserTaskGateway, color_gateway: ColorGateway, encouragement_gateway: EncouragementGateway) {
+    this.taskGateway = taskGateway;
     this.encouragement_gateway = encouragement_gateway;
     this.color_gateway = color_gateway;
     this.userTaskGateway = userTaskGateway;
-    this.taskGateway = taskGateway;
   }
 
   async getTodaysTask(): Promise<ErrorResponse|Response> {
@@ -81,8 +81,8 @@ export class DoGoodApplication {
       statusCode: StatusCode.Uncompleted,
     });
 
-    const color = await this.color_gateway.get_random_color();
-    const encouragement = await this.encouragement_gateway.get_random_encouragement();
+    const color = await this.color_gateway.getRandomColor();
+    const encouragement = await this.encouragement_gateway.getRandomEncouragement();
 
     return Promise.resolve({
       color: color,
@@ -115,8 +115,8 @@ export class DoGoodApplication {
     uncompleted.statusCode = StatusCode.Completed;
     await this.userTaskGateway.save(uncompleted);
 
-    const color = await this.color_gateway.get_random_color();
-    const encouragement = await this.encouragement_gateway.get_random_encouragement();
+    const color = await this.color_gateway.getRandomColor();
+    const encouragement = await this.encouragement_gateway.getRandomEncouragement();
 
     return Promise.resolve({
       color: color,

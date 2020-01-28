@@ -1,6 +1,6 @@
 import React, {Component} from "react";
-import {DoGoodApplication, Response} from "./application";
-import {DoGoodApplicationFactory} from "./factory";
+import {DoGoodApplication, Response} from "../application";
+import {DoGoodApplicationFactory} from "../factory";
 
 type TaskState = {
     backgroundColor: string,

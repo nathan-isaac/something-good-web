@@ -1,4 +1,4 @@
-import {InMemoryUserTaskGateway, StatusCode} from "../user_task_gateway";
+import {InMemoryUserTaskGateway, StatusCode} from "../../user_task_gateway";
 
 let gateway: InMemoryUserTaskGateway;
 

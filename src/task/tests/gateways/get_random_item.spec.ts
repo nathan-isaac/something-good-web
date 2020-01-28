@@ -1,4 +1,4 @@
-import {MathRandomizer} from "../randomizer";
+import {MathRandomizer} from "../../randomizer";
 
 let randomizer = new MathRandomizer();
 

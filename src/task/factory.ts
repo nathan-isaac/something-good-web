@@ -1,9 +1,9 @@
 import {DoGoodApplication} from "./application";
 import {MathRandomizer} from "./randomizer";
-import {LocalJsonTaskGateway} from "./task_gateway";
+import {LocalJsonTaskGateway} from "./gateways/task_gateway";
 import {InMemoryUserTaskGateway} from "./user_task_gateway";
-import {ArrayColorGateway} from "./color_gateway";
-import {ArrayEncouragementGateway} from "./encouragement_gateway";
+import {ArrayColorGateway} from "./gateways/color_gateway";
+import {ArrayEncouragementGateway} from "./gateways/encouragement_gateway";
 
 const COLORS: string[] = [
   "#442B48",

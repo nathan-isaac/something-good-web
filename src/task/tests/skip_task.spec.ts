@@ -1,28 +1,34 @@
 import {DoGoodApplication, ResponseErrorCode} from "../application";
-import {InMemoryTaskGateway} from "../task_gateway";
+import {InMemoryTaskGateway} from "../gateways/task_gateway";
 import {InMemoryUserTaskGateway, StatusCode, UserTaskGateway} from "../user_task_gateway";
-import {ColorGatewayStub} from "../color_gateway";
-import {EncouragementGatewayStub} from "../encouragement_gateway";
+import {RandomizerStub} from "../randomizer";
+import {ColorGatewayStub} from "../gateways/color_gateway";
+import {EncouragementGatewayStub} from "../gateways/encouragement_gateway";
 
 let taskGateway: InMemoryTaskGateway;
 let userTaskGateway: UserTaskGateway;
 let application: DoGoodApplication;
+let randomizer: RandomizerStub;
 let color_gateway: ColorGatewayStub;
 let encouragement_gateway: EncouragementGatewayStub;
 
-
 beforeEach(() => {
-  taskGateway = new InMemoryTaskGateway();
+  randomizer = new RandomizerStub();
+  taskGateway = new InMemoryTaskGateway(randomizer);
   userTaskGateway = new InMemoryUserTaskGateway();
   color_gateway = new ColorGatewayStub();
   encouragement_gateway = new EncouragementGatewayStub();
   application = new DoGoodApplication(taskGateway, userTaskGateway, color_gateway, encouragement_gateway);
 });
 
-it('withNoUserTask_ReturnNotUserTaskResponseCode', async () => {
-  const response = await application.completeTask();
+describe.only('skip', () => {});
 
-  expect(response.errorCode).toBe(ResponseErrorCode.NoUserTaskFound);
+it('withNoUserTask_ReturnNotUserTaskResponseCode', async () => {
+  const response = await application.skipTask();
+
+  expect(response).toEqual({
+    errorCode: ResponseErrorCode.NoUserTaskFound
+  });
 });
 
 it('withUserTaskButNoTasks_ReturnNoTaskResponseCode', async () => {
@@ -31,12 +37,16 @@ it('withUserTaskButNoTasks_ReturnNoTaskResponseCode', async () => {
     statusCode: StatusCode.Uncompleted,
   });
 
-  const response = await application.completeTask();
+  const response = await application.skipTask();
 
-  expect(response.errorCode).toBe(ResponseErrorCode.NoTaskFound);
+  expect(response).toEqual({
+    errorCode: ResponseErrorCode.NoTaskFound
+  });
 });
 
-it('withUerTaskAndTask_CompleteUserTask', async () => {
+it('withUserTaskAndTask_SkipUserTask', async () => {
+  randomizer.randomIndex = 1;
+  
   await userTaskGateway.save({
     taskId: 12,
     statusCode: StatusCode.Uncompleted,
@@ -46,16 +56,20 @@ it('withUerTaskAndTask_CompleteUserTask', async () => {
     id: 12,
     title: 'Title',
   });
+  await taskGateway.save({
+    id: 13,
+    title: 'Other Title',
+  });
 
-  const response = await application.completeTask();
+  const response = await application.skipTask();
 
   expect(response).toEqual({
     color: 'color',
     encouragement: 'encouragement',
     task: {
-      id: 12,
-      title: 'Title',
-      completed: true,
+      id: 13,
+      title: 'Other Title',
+      completed: false,
     }
   });
 
@@ -64,8 +78,14 @@ it('withUerTaskAndTask_CompleteUserTask', async () => {
   expect(userTasks[0]).toEqual({
     id: 1,
     taskId: 12,
-    statusCode: StatusCode.Completed,
+    statusCode: StatusCode.Skipped,
   });
+  expect(userTasks[1]).toEqual({
+    id: 2,
+    taskId: 13,
+    statusCode: StatusCode.Uncompleted,
+  });
+  expect(userTasks.length).toBe(2);
 });
 
 // what happens if the user task has only completed or skipped tasks?

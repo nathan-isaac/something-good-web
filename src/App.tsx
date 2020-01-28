@@ -1,5 +1,5 @@
 import React from 'react';
-import Task from './task/Task';
+import Task from './task/view/Task';
 
 function App() {
   return (

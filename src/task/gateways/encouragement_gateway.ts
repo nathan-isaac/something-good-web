@@ -1,24 +1,28 @@
-import {Randomizer} from "./randomizer";
+import {Randomizer} from "../randomizer";
 
 export type Encouragement = string;
 
 export interface EncouragementGateway {
-  get_random_encouragement(): Promise<Encouragement>;
+  getRandomEncouragement(): Promise<Encouragement>;
 }
 
 export class EncouragementGatewayStub implements EncouragementGateway {
-  protected encouragement: Encouragement = 'encouragement';
+  protected encouragement: Encouragement;
 
-  get_random_encouragement(): Promise<Encouragement> {
+  constructor(encouragement: Encouragement = 'encouragement') {
+    this.encouragement = encouragement;
+  }
+
+  getRandomEncouragement(): Promise<Encouragement> {
     return Promise.resolve(this.encouragement);
   }
 
-  set_encouragement(encouragement: Encouragement) {
+  setEncouragement(encouragement: Encouragement) {
     this.encouragement = encouragement;
   }
 }
 
-export class ArrayEncouragementGateway {
+export class ArrayEncouragementGateway implements EncouragementGateway {
   protected encouragements: Encouragement[];
   private randomizer: Randomizer;
 
@@ -27,7 +31,7 @@ export class ArrayEncouragementGateway {
     this.randomizer = randomizer;
   }
 
-  get_random_encouragement(): Promise<Encouragement> {
+  getRandomEncouragement(): Promise<Encouragement> {
     return Promise.resolve(this.randomizer.getRandomItem(this.encouragements));
   }
 }

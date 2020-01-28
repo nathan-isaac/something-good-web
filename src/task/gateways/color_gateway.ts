@@ -1,21 +1,25 @@
 
 // maybe make object with hex, rgb attributes?
-import {Randomizer} from "./randomizer";
+import {Randomizer} from "../randomizer";
 
 export type Color = string;
 
 export interface ColorGateway {
-  get_random_color(): Promise<Color>;
+  getRandomColor(): Promise<Color>;
 }
 
 export class ColorGatewayStub implements ColorGateway {
   protected color: Color = 'color';
 
-  get_random_color(): Promise<Color> {
+  constructor(color: Color) {
+    this.color = color;
+  }
+
+  getRandomColor(): Promise<Color> {
     return Promise.resolve(this.color);
   }
 
-  set_color(color: Color) {
+  setColor(color: Color) {
     this.color = color;
   }
 }
@@ -29,7 +33,7 @@ export class ArrayColorGateway implements ColorGateway {
     this.randomizer = randomizer;
   }
 
-  get_random_color(): Promise<Color> {
+  getRandomColor(): Promise<Color> {
     return Promise.resolve(this.randomizer.getRandomItem(this.colors));
   }
 }
