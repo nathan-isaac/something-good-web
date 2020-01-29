@@ -1,3 +1,4 @@
+import {DateTime} from "luxon";
 
 export enum TaskStatus {
   uncompleted,
@@ -11,7 +12,7 @@ export type TodaysTask = {
   color: string,
   encouragement: string,
   status: TaskStatus,
-  created_at: string,
+  created_at: DateTime,
 }
 
 export interface TodaysTaskGateway {

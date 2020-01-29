@@ -34,9 +34,7 @@ beforeEach(() => {
     todaysTaskGateway,
   });
 
-  manageTasks.setTestDate(DateTime.fromISO('2020-01-27', {
-    zone: 'America/Los_Angeles',
-  }));
+  manageTasks.setTestDate(DateTime.fromISO('2020-01-27'));
 });
 
 it('should get new task without a today\'s task', async () => {
@@ -58,7 +56,7 @@ it('should get new task without a today\'s task', async () => {
       color: DEFAULT_COLOR,
       encouragement: DEFAULT_ENCOURAGEMENT,
       status: TaskStatus.uncompleted,
-      created_at: '2020-01-27T00:00:00.000-08:00',
+      created_at: DateTime.fromISO('2020-01-27'),
     }
   ]);
   expect(taskHistoryGateway.saveParams).toEqual([]);
@@ -71,7 +69,7 @@ it('should get saved task since date has not expired', async () => {
     color: 'todays color',
     encouragement: 'todays encouragement',
     status: TaskStatus.uncompleted,
-    created_at: '2020-01-27T00:00:00.000-08:00',
+    created_at: DateTime.fromISO('2020-01-27'),
   };
 
   const taskResponse = await manageTasks.getTodaysTask();
@@ -96,7 +94,7 @@ it('should get todays completed task', async () => {
     color: 'todays color',
     encouragement: 'todays encouragement',
     status: TaskStatus.completed,
-    created_at: '2020-01-27T00:00:00.000-08:00',
+    created_at: DateTime.fromISO('2020-01-27'),
   };
 
   const taskResponse = await manageTasks.getTodaysTask();
@@ -121,7 +119,7 @@ it('should get a new task if current task has expired', async () => {
     color: 'todays color',
     encouragement: 'todays encouragement',
     status: TaskStatus.uncompleted,
-    created_at: '2020-01-26T00:00:00.000-08:00',
+    created_at: DateTime.fromISO('2020-01-26'),
   };
 
   const taskResponse = await manageTasks.getTodaysTask();
@@ -142,7 +140,7 @@ it('should get a new task if current task has expired', async () => {
       color: DEFAULT_COLOR,
       encouragement: DEFAULT_ENCOURAGEMENT,
       status: TaskStatus.uncompleted,
-      created_at: '2020-01-27T00:00:00.000-08:00',
+      created_at: DateTime.fromISO('2020-01-27'),
     }
   ]);
   expect(taskHistoryGateway.saveParams).toEqual([]);

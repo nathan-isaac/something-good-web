@@ -54,7 +54,7 @@ export class ManageTasks {
   protected async getSavedForNewTask(): Promise<TodaysTask> {
     const todaysTask = await this.todaysTaskGateway.getTodaysTask();
 
-    if (todaysTask && DateTime.fromISO(todaysTask.created_at).hasSame(this.getCurrentDateTime(),'day')) {
+    if (todaysTask && todaysTask.created_at.hasSame(this.getCurrentDateTime(),'day')) {
       return Promise.resolve(todaysTask);
     }
 
@@ -68,7 +68,7 @@ export class ManageTasks {
       color: randomColor,
       encouragement: randomEncouragement,
       status: TaskStatus.uncompleted,
-      created_at: this.getCurrentDateTime().toISO(),
+      created_at: this.getCurrentDateTime(),
     };
 
     await this.todaysTaskGateway.saveTodaysTask(newTodaysTask);
