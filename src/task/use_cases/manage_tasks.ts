@@ -46,15 +46,15 @@ export class ManageTasks {
       title: todaysTask.title,
       color: todaysTask.color,
       encouragement: todaysTask.encouragement,
-      showEncouragement: false,
-      completed: false
+      showEncouragement: todaysTask.status == TaskStatus.completed,
+      completed: todaysTask.status == TaskStatus.completed,
     });
   }
 
   protected async getSavedForNewTask(): Promise<TodaysTask> {
     const todaysTask = await this.todaysTaskGateway.getTodaysTask();
 
-    if (todaysTask) {
+    if (todaysTask && DateTime.fromISO(todaysTask.created_at).hasSame(this.getCurrentDateTime(),'day')) {
       return Promise.resolve(todaysTask);
     }
 
