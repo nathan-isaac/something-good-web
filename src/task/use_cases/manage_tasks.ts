@@ -1,6 +1,9 @@
 import {TaskGateway} from "../gateways/task_gateway";
 import {ColorGateway} from "../gateways/color_gateway";
 import {EncouragementGateway} from "../gateways/encouragement_gateway";
+import {DateTime} from "luxon";
+import {TaskStatus, TodaysTask, TodaysTaskGateway} from "../gateways/todays_task_gateway";
+import {TaskHistoryGateway} from "../gateways/task_history_gateway";
 
 export type TaskResponse = {
   id: number,
@@ -15,31 +18,73 @@ export type ManageTaskConfig = {
   taskGateway: TaskGateway,
   colorGateway: ColorGateway,
   encouragementGateway: EncouragementGateway,
+  todaysTaskGateway: TodaysTaskGateway,
+  taskHistoryGateway: TaskHistoryGateway,
 }
 
 export class ManageTasks {
   protected taskGateway: TaskGateway;
   protected colorGateway: ColorGateway;
   protected encouragementGateway: EncouragementGateway;
+  protected taskHistoryGateway: TaskHistoryGateway;
+  protected todaysTaskGateway: TodaysTaskGateway;
+  protected testDateTime: DateTime | undefined;
 
   constructor(config: ManageTaskConfig) {
     this.taskGateway = config.taskGateway;
     this.colorGateway = config.colorGateway;
     this.encouragementGateway = config.encouragementGateway;
+    this.taskHistoryGateway = config.taskHistoryGateway;
+    this.todaysTaskGateway = config.todaysTaskGateway;
   }
 
   async getTodaysTask(): Promise<TaskResponse> {
+    const todaysTask = await this.getSavedForNewTask();
+
+    return Promise.resolve({
+      id: todaysTask.id,
+      title: todaysTask.title,
+      color: todaysTask.color,
+      encouragement: todaysTask.encouragement,
+      showEncouragement: false,
+      completed: false
+    });
+  }
+
+  protected async getSavedForNewTask(): Promise<TodaysTask> {
+    const todaysTask = await this.todaysTaskGateway.getTodaysTask();
+
+    if (todaysTask) {
+      return Promise.resolve(todaysTask);
+    }
+
     const randomTask = await this.taskGateway.getRandomTask();
     const randomColor = await this.colorGateway.getRandomColor();
     const randomEncouragement = await this.encouragementGateway.getRandomEncouragement();
 
-    return Promise.resolve({
+    const newTodaysTask = {
       id: randomTask.id,
       title: randomTask.title,
       color: randomColor,
       encouragement: randomEncouragement,
-      showEncouragement: false,
-      completed: false
-    });
+      status: TaskStatus.uncompleted,
+      created_at: this.getCurrentDateTime().toISO(),
+    };
+
+    await this.todaysTaskGateway.saveTodaysTask(newTodaysTask);
+
+    return Promise.resolve(newTodaysTask);
+  }
+
+  getCurrentDateTime(): DateTime {
+    if (this.testDateTime) {
+      return this.testDateTime;
+    }
+
+    return DateTime.local();
+  }
+
+  setTestDate(dateTime: DateTime) {
+    this.testDateTime = dateTime;
   }
 }

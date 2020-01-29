@@ -1,10 +1,12 @@
 import {DoGoodApplication, ResponseErrorCode} from "../application";
-import {TaskGatewayStub} from "./gateways/gateways";
+import {TaskGatewayStub, TaskHistoryGatewaySpy, TodaysTaskGatewaySpy} from "./gateways/gateways";
 import {InMemoryUserTaskGateway, StatusCode, UserTaskGateway} from "../user_task_gateway";
 import {Randomizer, RandomizerStub} from "../randomizer";
 import {ColorGatewayStub} from "../gateways/color_gateway";
 import {EncouragementGatewayStub} from "../gateways/encouragement_gateway";
 import {ManageTasks} from "../use_cases/manage_tasks";
+import {DateTime} from "luxon";
+import {TaskStatus} from "../gateways/todays_task_gateway";
 
 // sync remote tasks locally
 // get local tasks
@@ -20,7 +22,7 @@ let taskGateway: TaskGatewayStub;
 let taskHistoryGateway: TaskHistoryGatewaySpy;
 let todaysTaskGateway: TodaysTaskGatewaySpy;
 let colorGateway: ColorGatewayStub;
-let encouragementGateway: EncouragementGatewaySpy;
+let encouragementGateway: EncouragementGatewayStub;
 let manageTasks: ManageTasks;
 
 const DEFAULT_TASK = {
@@ -35,16 +37,24 @@ beforeEach(() => {
   taskGateway = new TaskGatewayStub(DEFAULT_TASK);
   colorGateway = new ColorGatewayStub(DEFAULT_COLOR);
   encouragementGateway = new EncouragementGatewayStub(DEFAULT_ENCOURAGEMENT);
+  taskHistoryGateway = new TaskHistoryGatewaySpy();
+  todaysTaskGateway = new TodaysTaskGatewaySpy();
   manageTasks = new ManageTasks({
     taskGateway,
     colorGateway,
-    encouragementGateway
+    encouragementGateway,
+    taskHistoryGateway,
+    todaysTaskGateway,
   });
+
+  manageTasks.setTestDate(DateTime.fromISO('2020-01-27', {
+    zone: 'America/Los_Angeles',
+  }));
 });
 
 // 1. without today's task
 it('should get new task without a today\'s task', async () => {
-  const taskResponse = await manageTasks.getTodaysTask(); // currentTask(), myTask()
+  const taskResponse = await manageTasks.getTodaysTask();
 
   expect(taskResponse).toEqual({
     id: DEFAULT_TASK.id,
@@ -55,35 +65,54 @@ it('should get new task without a today\'s task', async () => {
     completed: false,
   });
 
-  // expect(taskHistoryGateway.saveParams).toEqual([]);
-  // expect(todaysTaskGateway.saveParams).toEqual([
-  //   {
-  //     id: DEFAULT_TASK.id,
-  //     title: DEFAULT_TASK.title,
-  //     color: DEFAULT_COLOR,
-  //     encouragement: DEFAULT_ENCOURAGEMENT,
-  //     created_at: '2020-01-27T00:00:00' // timezone?
-  //   }
-  // ]);
+  expect(todaysTaskGateway.saveTodaysTaskParams).toEqual([
+    {
+      id: DEFAULT_TASK.id,
+      title: DEFAULT_TASK.title,
+      color: DEFAULT_COLOR,
+      encouragement: DEFAULT_ENCOURAGEMENT,
+      status: TaskStatus.uncompleted,
+      created_at: '2020-01-27T00:00:00.000-08:00',
+    }
+  ]);
+  expect(taskHistoryGateway.saveParams).toEqual([]);
 });
+
 // 2. with today's task and date hasn't expired
+it('should get saved task since date has not expired', async () => {
+  todaysTaskGateway.getTodaysTaskReturn = {
+    id: 1000,
+    title: 'todays task title',
+    color: 'todays color',
+    encouragement: 'todays encouragement',
+    status: TaskStatus.uncompleted,
+    created_at: '2020-01-27T00:00:00.000-08:00',
+  };
+
+  const taskResponse = await manageTasks.getTodaysTask();
+
+  expect(taskResponse).toEqual({
+    id: 1000,
+    title: 'todays task title',
+    color: 'todays color',
+    encouragement: 'todays encouragement',
+    showEncouragement: false,
+    completed: false,
+  });
+
+  expect(todaysTaskGateway.saveTodaysTaskParams).toEqual([]);
+  expect(taskHistoryGateway.saveParams).toEqual([]);
+});
+
 // 3. with today's task but date has expired
+it('should do something', async () => {
 
+});
 
+// 4. with today's task completed
+it('should do another thing', async () => {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+});
 
 
 // beforeEach(() => {
