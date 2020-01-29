@@ -112,7 +112,7 @@ it('should get todays completed task', async () => {
   expect(taskHistoryGateway.saveParams).toEqual([]);
 });
 
-it('should get a new task if current task has expired', async () => {
+it('should get a new task if current uncompleted task has expired', async () => {
   todaysTaskGateway.getTodaysTaskReturn = {
     id: 1000,
     title: 'todays task title',
@@ -143,8 +143,55 @@ it('should get a new task if current task has expired', async () => {
       created_at: DateTime.fromISO('2020-01-27'),
     }
   ]);
-  expect(taskHistoryGateway.saveParams).toEqual([]);
+  expect(taskHistoryGateway.saveParams).toEqual([
+    {
+      task_title: 'todays task title',
+      task_color: 'todays color',
+      task_encouragement: 'todays encouragement',
+      task_status: TaskStatus.uncompleted,
+      created_at: DateTime.fromISO('2020-01-27'),
+    }
+  ]);
 });
 
-// save completed task to history
-// save uncompleted task to history as skipped
+it('should get a new task if current completed task has expired', async () => {
+  todaysTaskGateway.getTodaysTaskReturn = {
+    id: 1000,
+    title: 'todays task title',
+    color: 'todays color',
+    encouragement: 'todays encouragement',
+    status: TaskStatus.completed,
+    created_at: DateTime.fromISO('2020-01-26'),
+  };
+
+  const taskResponse = await manageTasks.getTodaysTask();
+
+  expect(taskResponse).toEqual({
+    id: DEFAULT_TASK.id,
+    title: DEFAULT_TASK.title,
+    color: DEFAULT_COLOR,
+    encouragement: DEFAULT_ENCOURAGEMENT,
+    showEncouragement: false,
+    completed: false,
+  });
+
+  expect(todaysTaskGateway.saveTodaysTaskParams).toEqual([
+    {
+      id: DEFAULT_TASK.id,
+      title: DEFAULT_TASK.title,
+      color: DEFAULT_COLOR,
+      encouragement: DEFAULT_ENCOURAGEMENT,
+      status: TaskStatus.uncompleted,
+      created_at: DateTime.fromISO('2020-01-27'),
+    }
+  ]);
+  expect(taskHistoryGateway.saveParams).toEqual([
+    {
+      task_title: 'todays task title',
+      task_color: 'todays color',
+      task_encouragement: 'todays encouragement',
+      task_status: TaskStatus.completed,
+      created_at: DateTime.fromISO('2020-01-27'),
+    }
+  ]);
+});

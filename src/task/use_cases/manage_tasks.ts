@@ -58,6 +58,16 @@ export class ManageTasks {
       return Promise.resolve(todaysTask);
     }
 
+    if (todaysTask && ! todaysTask.created_at.hasSame(this.getCurrentDateTime(),'day')) {
+      await this.taskHistoryGateway.save({
+        task_title: todaysTask.title,
+        task_color: todaysTask.color,
+        task_encouragement: todaysTask.encouragement,
+        task_status: todaysTask.status,
+        created_at: this.getCurrentDateTime(),
+      });
+    }
+
     const randomTask = await this.taskGateway.getRandomTask();
     const randomColor = await this.colorGateway.getRandomColor();
     const randomEncouragement = await this.encouragementGateway.getRandomEncouragement();
