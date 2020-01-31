@@ -39,7 +39,7 @@ export class ManageTasks {
   }
 
   async getTodaysTask(): Promise<TaskResponse> {
-    const todaysTask = await this.getSavedForNewTask();
+    const todaysTask = await this.getSavedOrNewTask();
 
     return Promise.resolve({
       id: todaysTask.id,
@@ -51,7 +51,7 @@ export class ManageTasks {
     });
   }
 
-  protected async getSavedForNewTask(): Promise<TodaysTask> {
+  protected async getSavedOrNewTask(): Promise<TodaysTask> {
     const todaysTask = await this.todaysTaskGateway.getTodaysTask();
 
     if (todaysTask && todaysTask.created_at.hasSame(this.getCurrentDateTime(),'day')) {
@@ -79,11 +79,24 @@ export class ManageTasks {
       encouragement: randomEncouragement,
       status: TaskStatus.uncompleted,
       created_at: this.getCurrentDateTime(),
+      updated_at: this.getCurrentDateTime(),
     };
 
     await this.todaysTaskGateway.saveTodaysTask(newTodaysTask);
 
     return Promise.resolve(newTodaysTask);
+  }
+
+  async completeTodaysTask(): Promise<void> {
+    const todaysTask = await this.todaysTaskGateway.getTodaysTask();
+
+    if (todaysTask) {
+      todaysTask.status = TaskStatus.completed;
+      todaysTask.updated_at = this.getCurrentDateTime();
+      await this.todaysTaskGateway.saveTodaysTask(todaysTask);
+    }
+
+    return Promise.resolve();
   }
 
   getCurrentDateTime(): DateTime {

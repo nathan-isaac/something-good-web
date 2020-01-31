@@ -1,72 +1,102 @@
-import {DoGoodApplication, ResponseErrorCode} from "../application";
-import {InMemoryTaskGateway} from "../gateways/task_gateway";
-import {InMemoryUserTaskGateway, StatusCode, UserTaskGateway} from "../user_task_gateway";
+import {TaskGatewayStub, TaskHistoryGatewaySpy, TodaysTaskGatewaySpy} from "./gateways/gateways";
 import {ColorGatewayStub} from "../gateways/color_gateway";
 import {EncouragementGatewayStub} from "../gateways/encouragement_gateway";
+import {ManageTasks} from "../use_cases/manage_tasks";
+import {DateTime} from "luxon";
+import {TaskStatus} from "../gateways/todays_task_gateway";
 
-let taskGateway: InMemoryTaskGateway;
-let userTaskGateway: UserTaskGateway;
-let application: DoGoodApplication;
-let color_gateway: ColorGatewayStub;
-let encouragement_gateway: EncouragementGatewayStub;
+let taskGateway: TaskGatewayStub;
+let taskHistoryGateway: TaskHistoryGatewaySpy;
+let todaysTaskGateway: TodaysTaskGatewaySpy;
+let colorGateway: ColorGatewayStub;
+let encouragementGateway: EncouragementGatewayStub;
+let manageTasks: ManageTasks;
 
-describe.only('skip', () => {});
+const DEFAULT_TASK = {
+  id: 100,
+  title: 'example task',
+};
+
+const DEFAULT_COLOR = 'default-color';
+const DEFAULT_ENCOURAGEMENT = 'default-encouragement';
 
 beforeEach(() => {
-  taskGateway = new InMemoryTaskGateway();
-  userTaskGateway = new InMemoryUserTaskGateway();
-  color_gateway = new ColorGatewayStub();
-  encouragement_gateway = new EncouragementGatewayStub();
-  application = new DoGoodApplication(taskGateway, userTaskGateway, color_gateway, encouragement_gateway);
-});
-
-it('withNoUserTask_ReturnNotUserTaskResponseCode', async () => {
-  const response = await application.completeTask();
-
-  expect(response.errorCode).toBe(ResponseErrorCode.NoUserTaskFound);
-});
-
-it('withUserTaskButNoTasks_ReturnNoTaskResponseCode', async () => {
-  await userTaskGateway.save({
-    taskId: 12,
-    statusCode: StatusCode.Uncompleted,
+  taskGateway = new TaskGatewayStub(DEFAULT_TASK);
+  colorGateway = new ColorGatewayStub(DEFAULT_COLOR);
+  encouragementGateway = new EncouragementGatewayStub(DEFAULT_ENCOURAGEMENT);
+  taskHistoryGateway = new TaskHistoryGatewaySpy();
+  todaysTaskGateway = new TodaysTaskGatewaySpy();
+  manageTasks = new ManageTasks({
+    taskGateway,
+    colorGateway,
+    encouragementGateway,
+    taskHistoryGateway,
+    todaysTaskGateway,
   });
 
-  const response = await application.completeTask();
-
-  expect(response.errorCode).toBe(ResponseErrorCode.NoTaskFound);
+  manageTasks.setTestDate(DateTime.fromISO('2020-01-27'));
 });
 
-it('withUerTaskAndTask_CompleteUserTask', async () => {
-  await userTaskGateway.save({
-    taskId: 12,
-    statusCode: StatusCode.Uncompleted,
-  });
+// complete with no today's task. should this return a failure message or just return the new task for the day?
+it('should not complete task if there is no todays task', async () => {
+  await manageTasks.completeTodaysTask();
 
-  await taskGateway.save({
-    id: 12,
-    title: 'Title',
-  });
+  expect(todaysTaskGateway.saveTodaysTaskParams).toEqual([]);
+  expect(taskHistoryGateway.saveParams).toEqual([]);
+});
 
-  const response = await application.completeTask();
+// complete with today's task
+it('should complete task if there is a todays task', async () => {
+  todaysTaskGateway.getTodaysTaskReturn = {
+    id: DEFAULT_TASK.id,
+    title: DEFAULT_TASK.title,
+    color: DEFAULT_COLOR,
+    encouragement: DEFAULT_ENCOURAGEMENT,
+    status: TaskStatus.uncompleted,
+    created_at: DateTime.fromISO('2020-01-27'),
+    updated_at: DateTime.fromISO('2020-01-27'),
+  };
 
-  expect(response).toEqual({
-    color: 'color',
-    encouragement: 'encouragement',
-    task: {
-      id: 12,
-      title: 'Title',
-      completed: true,
+  await manageTasks.completeTodaysTask();
+
+  expect(todaysTaskGateway.saveTodaysTaskParams).toEqual([
+    {
+      id: DEFAULT_TASK.id,
+      title: DEFAULT_TASK.title,
+      color: DEFAULT_COLOR,
+      encouragement: DEFAULT_ENCOURAGEMENT,
+      status: TaskStatus.completed,
+      created_at: DateTime.fromISO('2020-01-27'),
+      updated_at: DateTime.fromISO('2020-01-27'),
     }
-  });
-
-  const userTasks = await userTaskGateway.all();
-
-  expect(userTasks[0]).toEqual({
-    id: 1,
-    taskId: 12,
-    statusCode: StatusCode.Completed,
-  });
+  ]);
+  expect(taskHistoryGateway.saveParams).toEqual([]);
 });
 
-// what happens if the user task has only completed or skipped tasks?
+// complete a task for the previous day
+it('should complete task if there is todays task set for the previous day', async () => {
+  todaysTaskGateway.getTodaysTaskReturn = {
+    id: DEFAULT_TASK.id,
+    title: DEFAULT_TASK.title,
+    color: DEFAULT_COLOR,
+    encouragement: DEFAULT_ENCOURAGEMENT,
+    status: TaskStatus.uncompleted,
+    created_at: DateTime.fromISO('2020-01-26'),
+    updated_at: DateTime.fromISO('2020-01-26'),
+  };
+
+  await manageTasks.completeTodaysTask();
+
+  expect(todaysTaskGateway.saveTodaysTaskParams).toEqual([
+    {
+      id: DEFAULT_TASK.id,
+      title: DEFAULT_TASK.title,
+      color: DEFAULT_COLOR,
+      encouragement: DEFAULT_ENCOURAGEMENT,
+      status: TaskStatus.completed,
+      created_at: DateTime.fromISO('2020-01-26'),
+      updated_at: DateTime.fromISO('2020-01-27'),
+    }
+  ]);
+  expect(taskHistoryGateway.saveParams).toEqual([]);
+});

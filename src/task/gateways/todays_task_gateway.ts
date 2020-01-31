@@ -13,6 +13,7 @@ export type TodaysTask = {
   encouragement: string,
   status: TaskStatus,
   created_at: DateTime,
+  updated_at: DateTime,
 }
 
 export interface TodaysTaskGateway {

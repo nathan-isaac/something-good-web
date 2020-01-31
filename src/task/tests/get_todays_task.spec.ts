@@ -57,6 +57,7 @@ it('should get new task without a today\'s task', async () => {
       encouragement: DEFAULT_ENCOURAGEMENT,
       status: TaskStatus.uncompleted,
       created_at: DateTime.fromISO('2020-01-27'),
+      updated_at: DateTime.fromISO('2020-01-27'),
     }
   ]);
   expect(taskHistoryGateway.saveParams).toEqual([]);
@@ -70,6 +71,7 @@ it('should get saved task since date has not expired', async () => {
     encouragement: 'todays encouragement',
     status: TaskStatus.uncompleted,
     created_at: DateTime.fromISO('2020-01-27'),
+    updated_at: DateTime.fromISO('2020-01-27'),
   };
 
   const taskResponse = await manageTasks.getTodaysTask();
@@ -95,6 +97,7 @@ it('should get todays completed task', async () => {
     encouragement: 'todays encouragement',
     status: TaskStatus.completed,
     created_at: DateTime.fromISO('2020-01-27'),
+    updated_at: DateTime.fromISO('2020-01-27'),
   };
 
   const taskResponse = await manageTasks.getTodaysTask();
@@ -120,6 +123,7 @@ it('should get a new task if current uncompleted task has expired', async () => 
     encouragement: 'todays encouragement',
     status: TaskStatus.uncompleted,
     created_at: DateTime.fromISO('2020-01-26'),
+    updated_at: DateTime.fromISO('2020-01-27'),
   };
 
   const taskResponse = await manageTasks.getTodaysTask();
@@ -141,6 +145,7 @@ it('should get a new task if current uncompleted task has expired', async () => 
       encouragement: DEFAULT_ENCOURAGEMENT,
       status: TaskStatus.uncompleted,
       created_at: DateTime.fromISO('2020-01-27'),
+      updated_at: DateTime.fromISO('2020-01-27'),
     }
   ]);
   expect(taskHistoryGateway.saveParams).toEqual([
@@ -162,6 +167,7 @@ it('should get a new task if current completed task has expired', async () => {
     encouragement: 'todays encouragement',
     status: TaskStatus.completed,
     created_at: DateTime.fromISO('2020-01-26'),
+    updated_at: DateTime.fromISO('2020-01-27'),
   };
 
   const taskResponse = await manageTasks.getTodaysTask();
@@ -183,6 +189,7 @@ it('should get a new task if current completed task has expired', async () => {
       encouragement: DEFAULT_ENCOURAGEMENT,
       status: TaskStatus.uncompleted,
       created_at: DateTime.fromISO('2020-01-27'),
+      updated_at: DateTime.fromISO('2020-01-27'),
     }
   ]);
   expect(taskHistoryGateway.saveParams).toEqual([
