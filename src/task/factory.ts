@@ -1,5 +1,5 @@
 import {MathRandomizer} from "./randomizer";
-import {LocalJsonTaskGateway} from "./gateways/task_gateway";
+import {ArrayTaskGateway, Task} from "./gateways/task_gateway";
 import {ArrayColorGateway} from "./gateways/color_gateway";
 import {ArrayEncouragementGateway} from "./gateways/encouragement_gateway";
 import {COLORS, ENCOURAGEMENTS} from "./config";
@@ -12,7 +12,17 @@ export class ManageTasksFactory {
 
   static getInstance(): ManageTasks {
     if (!ManageTasksFactory.instance) {
-      const taskGateway = new LocalJsonTaskGateway(new MathRandomizer());
+      const taskGateway = new ArrayTaskGateway(new MathRandomizer());
+
+      const tasks = require('../data/tasks.json');
+
+      tasks.forEach((task: Task) => {
+        taskGateway.addTask({
+          id: task.id,
+          title: task.title,
+        });
+      });
+
       const todaysTaskGateway = new ArrayTodaysTaskGateway();
       const taskHistoryGateway = new ArrayTaskHistoryGateway();
       const colorGateway = new ArrayColorGateway(COLORS, new MathRandomizer());

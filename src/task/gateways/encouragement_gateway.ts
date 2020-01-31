@@ -6,22 +6,6 @@ export interface EncouragementGateway {
   getRandomEncouragement(): Promise<Encouragement>;
 }
 
-export class EncouragementGatewayStub implements EncouragementGateway {
-  protected encouragement: Encouragement;
-
-  constructor(encouragement: Encouragement = 'encouragement') {
-    this.encouragement = encouragement;
-  }
-
-  getRandomEncouragement(): Promise<Encouragement> {
-    return Promise.resolve(this.encouragement);
-  }
-
-  setEncouragement(encouragement: Encouragement) {
-    this.encouragement = encouragement;
-  }
-}
-
 export class ArrayEncouragementGateway implements EncouragementGateway {
   protected encouragements: Encouragement[];
   private randomizer: Randomizer;

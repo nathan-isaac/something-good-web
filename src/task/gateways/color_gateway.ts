@@ -1,4 +1,3 @@
-
 // maybe make object with hex, rgb attributes?
 import {Randomizer} from "../randomizer";
 
@@ -6,22 +5,6 @@ export type Color = string;
 
 export interface ColorGateway {
   getRandomColor(): Promise<Color>;
-}
-
-export class ColorGatewayStub implements ColorGateway {
-  protected color: Color = 'color';
-
-  constructor(color: Color) {
-    this.color = color;
-  }
-
-  getRandomColor(): Promise<Color> {
-    return Promise.resolve(this.color);
-  }
-
-  setColor(color: Color) {
-    this.color = color;
-  }
 }
 
 export class ArrayColorGateway implements ColorGateway {

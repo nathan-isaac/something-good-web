@@ -9,7 +9,7 @@ export interface Task {
   title: string,
 }
 
-export class InMemoryTaskGateway implements TaskGateway {
+export class ArrayTaskGateway implements TaskGateway {
   protected tasks: Task[] = [];
   protected randomize: Randomizer;
 
@@ -25,21 +25,5 @@ export class InMemoryTaskGateway implements TaskGateway {
 
   addTask(task: Task) {
     this.tasks.push(Object.assign({}, task));
-  }
-}
-
-// TODO: just use in memory task gateway
-export class LocalJsonTaskGateway extends InMemoryTaskGateway {
-  constructor(randomizer: Randomizer) {
-    super(randomizer);
-
-    const tasks = require('../../data/tasks.json');
-
-    tasks.forEach((task: Task) => {
-      this.addTask({
-        id: task.id,
-        title: task.title,
-      });
-    })
   }
 }

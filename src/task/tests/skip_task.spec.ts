@@ -1,6 +1,10 @@
-import {TaskGatewayStub, TaskHistoryGatewaySpy, TodaysTaskGatewaySpy} from "./gateways/gateways";
-import {ColorGatewayStub} from "../gateways/color_gateway";
-import {EncouragementGatewayStub} from "../gateways/encouragement_gateway";
+import {
+  ColorGatewayStub,
+  EncouragementGatewayStub,
+  TaskGatewayStub,
+  TaskHistoryGatewaySpy,
+  TodaysTaskGatewaySpy
+} from "./gateways_test_doubles";
 import {ManageTasks} from "../use_cases/manage_tasks";
 import {DateTime} from "luxon";
 import {TaskStatus} from "../gateways/todays_task_gateway";
