@@ -1,90 +1,98 @@
 import React, {Component} from "react";
-import {DoGoodApplication, Response} from "../application";
-import {DoGoodApplicationFactory} from "../factory";
+import {ManageTasksFactory} from "../factory";
+import {TodaysTask} from "../gateways/todays_task_gateway";
+import {ManageTasks, TaskResponse} from "../use_cases/manage_tasks";
 
 type TaskState = {
-    backgroundColor: string,
+  task: {
+    id: number | null,
+    title: string,
     encouragement: string,
-    thing: {
-        id: number|null,
-        title: string,
-        completed: boolean,
-    }
-}
+    completed: boolean,
+    showEncouragement: boolean,
+    backgroundColor: string,
+  }
+};
 
 class Task extends Component<{}, TaskState> {
-  private app: DoGoodApplication;
+  private app: ManageTasks;
 
   constructor(props = {}) {
     super(props);
-    this.app = DoGoodApplicationFactory.getInstance();
+    this.app = ManageTasksFactory.getInstance();
 
     this.state = {
-      backgroundColor: "",
-      encouragement: "",
-      thing: {
+      task: {
         id: null,
         title: "",
+        backgroundColor: "",
+        encouragement: "",
         completed: false,
+        showEncouragement: false,
       },
     };
   }
 
   componentDidMount() {
-    this.app.getTodaysTask()
-      .then(response => {
-        this.setResponseState(response);
-      });
+    this.getTodaysTask();
   }
 
   componentWillUnmount() {
   }
 
+  getTodaysTask = () => {
+    this.app.getTodaysTask()
+      .then((response: TaskResponse) => {
+        this.setResponseState(response);
+      });
+  }
+
   // TODO: add refresh button
   onRefresh = () => {
-    console.log('refresh today\'s task');
+    this.getTodaysTask();
   }
 
   onComplete = () => {
-    this.app.completeTask()
-      .then(response => {
-        this.setResponseState(response);
+    this.app.completeTodaysTask()
+      .then(() => {
+        this.getTodaysTask();
       });
   }
 
   onSkip = () => {
-    this.app.skipTask()
-      .then(response => {
-        this.setResponseState(response);
+    this.app.skipTodaysTask()
+      .then(() => {
+        this.getTodaysTask();
       });
   }
 
-  setResponseState(response: Response) {
-    // TODO: check error states
-
-    if (!response.task) {
-      return;
-    }
-
+  setResponseState(response: TaskResponse) {
     this.setState({
-      task: response.task
+      task: {
+        id: response.id,
+        title: response.title,
+        encouragement: response.encouragement,
+        backgroundColor: response.color,
+        completed: response.completed,
+        showEncouragement: response.showEncouragement,
+      }
     })
   }
 
   render() {
     const titleStyle = {
-      'textDecoration': this.state.thing.completed ? 'line-through' : '',
+      'textDecoration': this.state.task.completed ? 'line-through' : '',
     };
 
     const mainStyle = {
-      'backgroundColor': this.state.backgroundColor,
+      'backgroundColor': this.state.task.backgroundColor,
     };
 
     return (
       <div style={mainStyle} className="h-screen bg-blue-500 text-white flex justify-center items-center">
         <div className="min-h-screen flex flex-col justify-between py-20 w-64">
           <h1 style={titleStyle} className="text-3xl">
-            {this.state.thing.title}
+            {this.state.task.title}
           </h1>
 
           <div className="text-center">
@@ -96,8 +104,8 @@ class Task extends Component<{}, TaskState> {
   }
 
   renderActionButtons() {
-    if (this.state.encouragement) {
-      return <p>{this.state.encouragement}</p>
+    if (this.state.task.showEncouragement) {
+      return <p>{this.state.task.encouragement}</p>
     }
 
     return (

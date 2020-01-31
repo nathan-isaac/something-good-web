@@ -18,6 +18,18 @@ export type TodaysTask = {
 
 export interface TodaysTaskGateway {
   saveTodaysTask(task: TodaysTask): Promise<void>;
-
   getTodaysTask(): Promise<TodaysTask|undefined>;
+}
+
+export class ArrayTodaysTaskGateway implements TodaysTaskGateway {
+  protected todaysTask: TodaysTask | undefined;
+
+  getTodaysTask(): Promise<TodaysTask | undefined> {
+    return Promise.resolve(this.todaysTask);
+  }
+
+  saveTodaysTask(task: TodaysTask): Promise<void> {
+    this.todaysTask = task;
+    return Promise.resolve();
+  }
 }

@@ -68,19 +68,7 @@ export class ManageTasks {
       });
     }
 
-    const randomTask = await this.taskGateway.getRandomTask();
-    const randomColor = await this.colorGateway.getRandomColor();
-    const randomEncouragement = await this.encouragementGateway.getRandomEncouragement();
-
-    const newTodaysTask = {
-      id: randomTask.id,
-      title: randomTask.title,
-      color: randomColor,
-      encouragement: randomEncouragement,
-      status: TaskStatus.uncompleted,
-      created_at: this.getCurrentDateTime(),
-      updated_at: this.getCurrentDateTime(),
-    };
+    const newTodaysTask = await this.getNewTask();
 
     await this.todaysTaskGateway.saveTodaysTask(newTodaysTask);
 
@@ -97,6 +85,43 @@ export class ManageTasks {
     }
 
     return Promise.resolve();
+  }
+
+  async skipTodaysTask(): Promise<void> {
+    const todaysTask = await this.todaysTaskGateway.getTodaysTask();
+
+    if (!todaysTask || todaysTask.status == TaskStatus.completed) {
+      return Promise.resolve();
+    }
+
+    await this.taskHistoryGateway.save({
+      task_title: todaysTask.title,
+      task_color: todaysTask.color,
+      task_encouragement: todaysTask.encouragement,
+      task_status: TaskStatus.skipped,
+      created_at: this.getCurrentDateTime(),
+    });
+
+    const newTask = await this.getNewTask();
+    await this.todaysTaskGateway.saveTodaysTask(newTask);
+
+    return Promise.resolve();
+  }
+
+  protected async getNewTask(): Promise<TodaysTask> {
+    const randomTask = await this.taskGateway.getRandomTask();
+    const randomColor = await this.colorGateway.getRandomColor();
+    const randomEncouragement = await this.encouragementGateway.getRandomEncouragement();
+
+    return Promise.resolve({
+      id: randomTask.id,
+      title: randomTask.title,
+      color: randomColor,
+      encouragement: randomEncouragement,
+      status: TaskStatus.uncompleted,
+      created_at: this.getCurrentDateTime(),
+      updated_at: this.getCurrentDateTime(),
+    });
   }
 
   getCurrentDateTime(): DateTime {

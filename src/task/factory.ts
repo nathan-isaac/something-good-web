@@ -1,44 +1,32 @@
-import {DoGoodApplication} from "./application";
 import {MathRandomizer} from "./randomizer";
 import {LocalJsonTaskGateway} from "./gateways/task_gateway";
-import {InMemoryUserTaskGateway} from "./user_task_gateway";
 import {ArrayColorGateway} from "./gateways/color_gateway";
 import {ArrayEncouragementGateway} from "./gateways/encouragement_gateway";
+import {COLORS, ENCOURAGEMENTS} from "./config";
+import {ManageTasks} from "./use_cases/manage_tasks";
+import {ArrayTodaysTaskGateway} from "./gateways/todays_task_gateway";
+import {ArrayTaskHistoryGateway} from "./gateways/task_history_gateway";
 
-const COLORS: string[] = [
-  "#442B48",
-  "#6320EE",
-  "#D81E5B",
-  "#F15152",
-  "#66635B",
-  "#A4036F",
-  "#16DB93",
-  "#F29E4C"
-];
+export class ManageTasksFactory {
+  protected static instance: ManageTasks;
 
-const ENCOURAGEMENTS: string[] = [
-  "Great job! The world is a better place because of you.",
-  "Solid work. Sometimes it’s the little things that save lives.",
-  "Well done. You did a good thing!",
-  "The hardest step is often the first one.",
-  "Way to make a difference!",
-  "Doing something good makes you feel good, too.",
-  "One more good deed done!",
-  "Lots of small things make one big thing."
-];
-
-export class DoGoodApplicationFactory {
-  protected static instance: DoGoodApplication;
-
-  static getInstance(): DoGoodApplication {
-    if (!DoGoodApplicationFactory.instance) {
+  static getInstance(): ManageTasks {
+    if (!ManageTasksFactory.instance) {
       const taskGateway = new LocalJsonTaskGateway(new MathRandomizer());
-      const userTaskGateway = new InMemoryUserTaskGateway();
-      const color_gateway = new ArrayColorGateway(COLORS, new MathRandomizer());
-      const encouragement_gateway = new ArrayEncouragementGateway(ENCOURAGEMENTS, new MathRandomizer());
-      DoGoodApplicationFactory.instance = new DoGoodApplication(taskGateway, userTaskGateway, color_gateway, encouragement_gateway);
+      const todaysTaskGateway = new ArrayTodaysTaskGateway();
+      const taskHistoryGateway = new ArrayTaskHistoryGateway();
+      const colorGateway = new ArrayColorGateway(COLORS, new MathRandomizer());
+      const encouragementGateway = new ArrayEncouragementGateway(ENCOURAGEMENTS, new MathRandomizer());
+
+      ManageTasksFactory.instance = new ManageTasks({
+        taskGateway,
+        todaysTaskGateway,
+        taskHistoryGateway,
+        colorGateway,
+        encouragementGateway,
+      });
     }
 
-    return DoGoodApplicationFactory.instance;
+    return ManageTasksFactory.instance;
   }
 }
