@@ -1,5 +1,16 @@
 [![CircleCI](https://circleci.com/gh/nathanjisaac/something-good-web.svg?style=svg)](https://circleci.com/gh/nathanjisaac/something-good-web)
 
+## TODO
+- [ ] Prompt for getting a new thing
+    - tap “I can’t do that thing today.”
+        - Alert Can’t do today’s thing? You can get a new thing if you need it. Never mind / Get a new one
+            a. Never mind: cancels
+            b. Animates, gets you a new thing
+- [ ] Persisting completed status for the day
+- [ ] Notifications
+- [ ] Loading animation
+- [ ] Shake events
+
 ## Architecture
 
 - UI

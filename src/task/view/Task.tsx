@@ -59,13 +59,17 @@ class Task extends Component<{}, TaskState> {
       });
   }
 
-  onSkip = () => {
-    this.app.skipTodaysTask()
-      .then(() => {
-        this.getTodaysTask();
-      });
-  }
+  onSkipButtonPressed = () => {
+    const result = window.confirm("Are you sure you want a new thing?");
 
+    if (result) {
+      this.app.skipTodaysTask()
+        .then(() => {
+          this.getTodaysTask();
+        });
+    }
+  }
+  
   setResponseState(response: TaskResponse) {
     this.setState({
       task: {
@@ -118,7 +122,7 @@ class Task extends Component<{}, TaskState> {
         </button>
 
         <button type="button"
-                onClick={this.onSkip}
+                onClick={this.onSkipButtonPressed}
                 className="block w-full py-2 px-4 mt-3"
         >
           I can't do this today.
