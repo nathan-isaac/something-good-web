@@ -123,7 +123,7 @@ class Task extends Component<{}, TaskState> {
 
         <button type="button"
                 onClick={this.onSkipButtonPressed}
-                className="block w-full py-2 px-4 mt-3"
+                className="skipButton block w-full py-2 px-4 mt-3"
         >
           I can't do this today.
         </button>
