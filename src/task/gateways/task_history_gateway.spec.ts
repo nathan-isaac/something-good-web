@@ -49,14 +49,16 @@ beforeEach(() => {
   gateway = new LocalStorageTaskHistoryGateway(localStorage);
 });
 
-it.only('should create the key and store taskHistory in local storage', async () => {
+it('should create the key and store taskHistory in local storage', async () => {
   const taskHistory: TaskHistory = {
     id: 3,
     task_title: "title",
     task_color: "#FF0000;",
     task_encouragement: "Be encouraged!",
     task_status: TaskStatus.completed,
-    created_at: DateTime.fromISO("2020-02-11T00:12:00"), // TODO: fix timezone
+    created_at: DateTime.fromISO("2020-02-11T00:12:00", {
+      zone: 'America/Los_Angeles'
+    }), // TODO: fix timezone
   }  
 
   await gateway.save(taskHistory);
@@ -65,11 +67,11 @@ it.only('should create the key and store taskHistory in local storage', async ()
     .toEqual('[{"id":3,"task_title":"title","task_color":"#FF0000;","task_encouragement":"Be encouraged!","task_status":1,"created_at":"2020-02-11T00:12:00.000-08:00"}]');
 });
 
-it('should add an item to the end of the empty current taskHistory object in local storage', () => {
+it.skip('should add an item to the end of the empty current taskHistory object in local storage', () => {
   expect(true).toBe(false);
 });
 
-it('should add an item to the end of the already-in-use current taskHistory object in local storage', () => {
+it.skip('should add an item to the end of the already-in-use current taskHistory object in local storage', () => {
   expect(true).toBe(false);
 });
 
