@@ -46,8 +46,8 @@ export class ManageTasks {
       title: todaysTask.title,
       color: todaysTask.color,
       encouragement: todaysTask.encouragement,
-      showEncouragement: todaysTask.status == TaskStatus.completed,
-      completed: todaysTask.status == TaskStatus.completed,
+      showEncouragement: todaysTask.status === TaskStatus.completed,
+      completed: todaysTask.status === TaskStatus.completed,
     });
   }
 
@@ -90,7 +90,7 @@ export class ManageTasks {
   async skipTodaysTask(): Promise<void> {
     const todaysTask = await this.todaysTaskGateway.getTodaysTask();
 
-    if (!todaysTask || todaysTask.status == TaskStatus.completed) {
+    if (!todaysTask || todaysTask.status === TaskStatus.completed) {
       return Promise.resolve();
     }
 
