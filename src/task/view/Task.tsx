@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import {ManageTasksFactory} from "../factory";
-import {TodaysTask} from "../gateways/todays_task_gateway";
 import {ManageTasks, TaskResponse} from "../use_cases/manage_tasks";
 
 type TaskState = {

@@ -41,6 +41,8 @@ class LocalStorageSpy implements Storage {
   }
 }
 
+// TODO: update log entry name to: event, record, entry, item
+
 let localStorage: LocalStorageSpy;
 let gateway: LocalStorageTaskHistoryGateway;
 
@@ -58,32 +60,70 @@ it('should create the key and store taskHistory in local storage', async () => {
     task_status: TaskStatus.completed,
     created_at: DateTime.fromISO("2020-02-11T00:12:00", {
       zone: 'America/Los_Angeles'
-    }), // TODO: fix timezone
-  }  
+    }), 
+  }
 
   await gateway.save(taskHistory);
   
+  const expected = {
+    id: 3,
+    task_title: "title",
+    task_color: "#FF0000;",
+    task_encouragement: "Be encouraged!",
+    task_status: 1,
+    created_at: "2020-02-11T00:12:00.000-08:00", 
+  };
   expect(localStorage.getItem('taskHistory'))
-    .toEqual('[{"id":3,"task_title":"title","task_color":"#FF0000;","task_encouragement":"Be encouraged!","task_status":1,"created_at":"2020-02-11T00:12:00.000-08:00"}]');
+    .toEqual(JSON.stringify([expected]));
 });
 
-it.skip('should add an item to the end of the empty current taskHistory object in local storage', () => {
-  expect(true).toBe(false);
+it('should create the key and store taskHistory in local storage other', async () => {
+  const taskHistory: TaskHistory = {
+    id: 10,
+    task_title: "another title",
+    task_color: "#FFFFFF;",
+    task_encouragement: "Be unencouraged!",
+    task_status: TaskStatus.uncompleted,
+    created_at: DateTime.fromISO("2019-11-12T01:30:10", {
+      zone: 'America/Los_Angeles'
+    }), 
+  }
+
+  await gateway.save(taskHistory);
+  
+  const expected = {
+    id: 10,
+    task_title: "another title",
+    task_color: "#FFFFFF;",
+    task_encouragement: "Be unencouraged!",
+    task_status: 0,
+    created_at: "2019-11-12T01:30:10.000-08:00", 
+  };
+  expect(localStorage.getItem('taskHistory'))
+    .toEqual(JSON.stringify([expected]));
 });
 
-it.skip('should add an item to the end of the already-in-use current taskHistory object in local storage', () => {
-  expect(true).toBe(false);
+it('should add an item to the end of the already-in-use current taskHistory object in local storage', async () => {
+  localStorage.setItem('taskHistory', JSON.stringify([{}]));
+  
+  const taskHistory: TaskHistory = {
+    id: 3,
+    task_title: "title",
+    task_color: "#FF0000;",
+    task_encouragement: "Be encouraged!",
+    task_status: TaskStatus.completed,
+    created_at: DateTime.fromISO("2020-02-11T00:12:00", {
+      zone: 'America/Los_Angeles'
+    }), 
+  }
+
+  await gateway.save(taskHistory);
+  
+  let result = localStorage.getItem('taskHistory');
+  
+  if (!result) {
+    result = '';
+  }
+
+  expect(JSON.parse(result).length).toBe(2);
 });
-
-// it('should retrieve current taskHistory object from local storage', () => {
-//   expect(true).toBe(false);
-// });
-
-// not local storage key
-// it should save task history with no local storage key
-
-// local storage with empty array
-// it should save task history with no local storage key
-
-
-// local storage with an existing history item

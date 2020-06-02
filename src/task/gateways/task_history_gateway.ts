@@ -28,27 +28,40 @@ export class LocalStorageTaskHistoryGateway implements TaskHistoryGateway {
   }
 
   async save(task: TaskHistory): Promise<void> {
-    // const history = await this.retrieve();
+    const history = await this.retrieve();
 
-    // history.push(task);
+    history.push(task);
 
-    this.localStorage.setItem('taskHistory', JSON.stringify([{
-      id: 3, 
-      task_title: task.task_title,
-      task_color: task.task_color,
-      task_encouragement: task.task_encouragement,
-      task_status: task.task_status,
-      created_at: task.created_at.toISO()
-    }]));
+    const historyString = history.map((item) => {
+      return {
+        id: item.id,
+        task_title: item.task_title,
+        task_color: item.task_color,
+        task_encouragement: item.task_encouragement,
+        task_status: item.task_status,
+        created_at: item.created_at.toISO()
+      }
+    });
+
+    this.localStorage.setItem('taskHistory', JSON.stringify(historyString));
   }
 
-  // async retrieve(): Promise<TaskHistory[]> {
-  //   const historyString = window.localStorage.getItem('taskHistory');
+  async retrieve(): Promise<TaskHistory[]> {
+    const historyString = this.localStorage.getItem('taskHistory');
 
-  //   if (!historyString) {
-  //     return [];
-  //   }
+    if (!historyString) {
+      return [];
+    }
 
-  //   return JSON.parse(historyString);
-  // }
+    return JSON.parse(historyString).map((item: any) => {
+      return {
+        id: item.id,
+        task_title: item.task_title,
+        task_color: item.task_color,
+        task_encouragement: item.task_encouragement,
+        task_status: item.task_status,
+        created_at: DateTime.fromISO(item.created_at)
+      }
+    });
+  }
 }
