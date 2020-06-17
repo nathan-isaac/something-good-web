@@ -33,3 +33,43 @@ export class ArrayTodaysTaskGateway implements TodaysTaskGateway {
     return Promise.resolve();
   }
 }
+
+export class LocalStorageTodaysTaskGateway implements TodaysTaskGateway {
+  protected localStorage: Storage
+
+  constructor(localStorage: Storage) {
+    this.localStorage = localStorage
+  }
+
+  getTodaysTask(): Promise<TodaysTask | undefined> {
+    const item = JSON.parse(this.localStorage.getItem('todaysTask') || '');
+
+    // if not null
+    
+
+    return Promise.resolve({
+      id: item.id,
+      title: item.title,
+      color: item.color,
+      encouragement: item.encouragement,
+      status: item.status,
+      created_at: DateTime.fromISO(item.created_at),
+      updated_at: DateTime.fromISO(item.updated_at)
+    })
+  }
+
+  saveTodaysTask(task: TodaysTask): Promise<void> {
+    const formattedTask = {
+        id: task.id,
+        title: task.title,
+        color: task.color,
+        encouragement: task.encouragement,
+        status: task.status,
+        created_at: task.created_at.toISO(),
+        updated_at: task.updated_at.toISO()
+    }
+
+    this.localStorage.setItem('todaysTask', JSON.stringify(formattedTask));
+    return Promise.resolve();
+  }
+}
