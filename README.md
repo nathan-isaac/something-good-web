@@ -6,7 +6,7 @@
         - Alert Can’t do today’s thing? You can get a new thing if you need it. Never mind / Get a new one
             a. Never mind: cancels
             b. Animates, gets you a new thing
-- [ ] Persisting completed status for the day
+- [x] Persisting completed status for the day
 - [ ] Notifications
 - [ ] Loading animation
 - [ ] Shake events

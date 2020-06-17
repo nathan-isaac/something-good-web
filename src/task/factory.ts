@@ -4,7 +4,7 @@ import {ArrayColorGateway} from "./gateways/color_gateway";
 import {ArrayEncouragementGateway} from "./gateways/encouragement_gateway";
 import {COLORS, ENCOURAGEMENTS} from "./config";
 import {ManageTasks} from "./use_cases/manage_tasks";
-import {ArrayTodaysTaskGateway} from "./gateways/todays_task_gateway";
+import {LocalStorageTodaysTaskGateway} from "./gateways/todays_task_gateway";
 import {LocalStorageTaskHistoryGateway} from "./gateways/task_history_gateway";
 
 export class ManageTasksFactory {
@@ -23,7 +23,7 @@ export class ManageTasksFactory {
         });
       });
 
-      const todaysTaskGateway = new ArrayTodaysTaskGateway();
+      const todaysTaskGateway = new LocalStorageTodaysTaskGateway(window.localStorage);
       const taskHistoryGateway = new LocalStorageTaskHistoryGateway(window.localStorage);
       const colorGateway = new ArrayColorGateway(COLORS, new MathRandomizer());
       const encouragementGateway = new ArrayEncouragementGateway(ENCOURAGEMENTS, new MathRandomizer());

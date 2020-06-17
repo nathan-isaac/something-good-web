@@ -42,10 +42,12 @@ export class LocalStorageTodaysTaskGateway implements TodaysTaskGateway {
   }
 
   getTodaysTask(): Promise<TodaysTask | undefined> {
-    const item = JSON.parse(this.localStorage.getItem('todaysTask') || '');
+    const item = JSON.parse(this.localStorage.getItem('todaysTask') || 'null');
 
-    // if not null
-    
+    if (!item) {
+      return Promise.resolve(undefined);
+    }
+
 
     return Promise.resolve({
       id: item.id,

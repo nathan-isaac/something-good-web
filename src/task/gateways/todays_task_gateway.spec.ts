@@ -45,6 +45,11 @@ describe('saveTodaysTask()', () => {
 })
 
 describe('getTodaysTask()', () => {
+  it('should return undefined if nothing is stored in local storage', async () => {
+    expect(await gateway.getTodaysTask())
+      .toBeUndefined();
+  });
+
   it('should create the key and serialize todaysTask to local storage', async () => {
     const todaysTask = {
       id: 3,
@@ -72,8 +77,3 @@ describe('getTodaysTask()', () => {
   });
   
 })
-
-
-// saveTodaysTask(todaysTask: TodaysTask)
-// getTodaysTask()
-
