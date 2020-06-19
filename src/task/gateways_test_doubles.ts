@@ -1,5 +1,5 @@
-import {Task, TaskGateway} from "../gateways/task_gateway";
-import {TodaysTask, TodaysTaskGateway} from "../gateways/todays_task_gateway";
+import {Task, TaskGateway} from "./gateways/task";
+import {TodaysTask, TodaysTaskGateway} from "./gateways/todaysTask";
 import {TaskHistory, TaskHistoryGateway} from "../gateways/task_history_gateway";
 import {Color, ColorGateway} from "../gateways/color_gateway";
 import {Encouragement, EncouragementGateway} from "../gateways/encouragement_gateway";

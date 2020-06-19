@@ -5,9 +5,9 @@ import {
   TaskHistoryGatewaySpy,
   TodaysTaskGatewaySpy
 } from "./gateways_test_doubles";
-import {ManageTasks} from "../use_cases/manage_tasks";
+import {ManageTasks} from "./service";
 import {DateTime} from "luxon";
-import {TaskStatus} from "../gateways/todays_task_gateway";
+import {TaskStatus} from "./gateways/todaysTask";
 
 let taskGateway: TaskGatewayStub;
 let taskHistoryGateway: TaskHistoryGatewaySpy;

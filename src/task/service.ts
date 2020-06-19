@@ -1,8 +1,8 @@
-import {TaskGateway} from "../gateways/task_gateway";
+import {TaskGateway} from "./gateways/task";
 import {ColorGateway} from "../gateways/color_gateway";
 import {EncouragementGateway} from "../gateways/encouragement_gateway";
 import {DateTime} from "luxon";
-import {TaskStatus, TodaysTask, TodaysTaskGateway} from "../gateways/todays_task_gateway";
+import {TaskStatus, TodaysTask, TodaysTaskGateway} from "./gateways/todaysTask";
 import {TaskHistoryGateway} from "../gateways/task_history_gateway";
 
 export type TaskResponse = {

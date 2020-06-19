@@ -1,7 +1,7 @@
-import { TodaysTask, LocalStorageTodaysTaskGateway, TodaysTaskGateway } from "./todays_task_gateway";
+import { TodaysTask, LocalStorageTodaysTaskGateway, TodaysTaskGateway } from "./todaysTask";
 import {DateTime} from "luxon";
-import {TaskStatus} from "./todays_task_gateway";
-import {LocalStorageSpy} from "../tests/helpers";
+import {TaskStatus} from "./todaysTask";
+import {LocalStorageSpy} from "../helpers";
 
 let localStorage: LocalStorageSpy;
 let gateway: LocalStorageTodaysTaskGateway;
