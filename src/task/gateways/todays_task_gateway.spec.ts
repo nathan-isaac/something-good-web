@@ -19,12 +19,8 @@ describe('saveTodaysTask()', () => {
       color: "#FF0000;",
       encouragement: "Be encouraged!",
       status: TaskStatus.completed,
-      created_at: DateTime.fromISO("2020-02-11T00:12:00", {
-        zone: 'America/Los_Angeles'
-      }),
-      updated_at: DateTime.fromISO("2020-02-11T00:12:00", {
-        zone: 'America/Los_Angeles'
-      })
+      created_at: DateTime.fromISO("2020-02-11T00:12:00"),
+      updated_at: DateTime.fromISO("2020-02-11T00:12:00")
     }
   
     await gateway.saveTodaysTask(todaysTask);
@@ -35,8 +31,8 @@ describe('saveTodaysTask()', () => {
       color: "#FF0000;",
       encouragement: "Be encouraged!",
       status: 1,
-      created_at: "2020-02-11T00:12:00.000-08:00",
-      updated_at: "2020-02-11T00:12:00.000-08:00",
+      created_at: "2020-02-11T00:12:00.000",
+      updated_at: "2020-02-11T00:12:00.000",
     }
     expect(localStorage.getItem('todaysTask'))
       .toEqual(JSON.stringify(expected));
@@ -57,8 +53,8 @@ describe('getTodaysTask()', () => {
       color: "#FF0000;",
       encouragement: "Be encouraged!",
       status: 1,
-      created_at: "2020-02-11T00:12:00.000-08:00",
-      updated_at: "2020-02-11T00:12:00.000-08:00",
+      created_at: "2020-02-11T00:12:00.000",
+      updated_at: "2020-02-11T00:12:00.000",
     }
     localStorage.setItem('todaysTask', JSON.stringify(todaysTask))
   

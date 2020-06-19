@@ -67,8 +67,12 @@ export class LocalStorageTodaysTaskGateway implements TodaysTaskGateway {
         color: task.color,
         encouragement: task.encouragement,
         status: task.status,
-        created_at: task.created_at.toISO(),
-        updated_at: task.updated_at.toISO()
+        created_at: task.created_at.toISO({
+          includeOffset: false,
+        }),
+        updated_at: task.updated_at.toISO({
+          includeOffset: false,
+        })
     }
 
     this.localStorage.setItem('todaysTask', JSON.stringify(formattedTask));

@@ -39,7 +39,9 @@ export class LocalStorageTaskHistoryGateway implements TaskHistoryGateway {
         task_color: item.task_color,
         task_encouragement: item.task_encouragement,
         task_status: item.task_status,
-        created_at: item.created_at.toISO()
+        created_at: item.created_at.toISO({
+          includeOffset: false,
+        })
       }
     });
 

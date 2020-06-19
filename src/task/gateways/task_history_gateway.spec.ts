@@ -29,9 +29,7 @@ it('should create the key and store taskHistory in local storage', async () => {
     task_color: "#FF0000;",
     task_encouragement: "Be encouraged!",
     task_status: TaskStatus.completed,
-    created_at: DateTime.fromISO("2020-02-11T00:12:00", {
-      zone: 'America/Los_Angeles'
-    }), 
+    created_at: DateTime.fromISO("2020-02-11T00:12:00"), 
   }
 
   await gateway.save(taskHistory);
@@ -42,7 +40,7 @@ it('should create the key and store taskHistory in local storage', async () => {
     task_color: "#FF0000;",
     task_encouragement: "Be encouraged!",
     task_status: 1,
-    created_at: "2020-02-11T00:12:00.000-08:00", 
+    created_at: "2020-02-11T00:12:00.000", 
   };
   expect(localStorage.getItem('taskHistory'))
     .toEqual(JSON.stringify([expected]));
@@ -57,9 +55,7 @@ it('should add an item to the end of the already-in-use current taskHistory obje
     task_color: "#FF0000;",
     task_encouragement: "Be encouraged!",
     task_status: TaskStatus.completed,
-    created_at: DateTime.fromISO("2020-02-11T00:12:00", {
-      zone: 'America/Los_Angeles'
-    }), 
+    created_at: DateTime.fromISO("2020-02-11T00:12:00"), 
   }
 
   await gateway.save(taskHistory);
