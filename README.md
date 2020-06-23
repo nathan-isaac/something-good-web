@@ -17,6 +17,34 @@
 - Use Cases
 - Gateways
 
+## Folder structure ideas
+
+```
+  data/
+    task.gateway.ts
+    user.gateway.ts
+    settings.gateway.ts
+  core/
+    task.service.ts
+    user.service.ts
+    settings.service.ts
+  views/ (very few, if any, imports; mainly just for routing)
+    task.view.tsx
+    user.view.tsx
+    settings.view.tsx
+  components/
+    utility/
+      taskCheckbox.tsx
+      menu.tsx
+      menuItem.tsx
+    custom/
+      task-timeline.tsx
+
+  /*
+  resources <--> generic api layer (gateway) <--> service layer (stateful, organized by resource) <--> framework with components (cvs : task.component.ts task.view.html task.style.scss)
+  */
+```
+
 ### UI
 
 The UI layer is only pulling data from use cases. In short the UI layer is mainly mapping use case data to reactjs state. No business logic in this layer. 

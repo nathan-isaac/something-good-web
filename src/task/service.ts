@@ -13,12 +13,10 @@ export type TaskResponse = {
 export class TaskService {
   constructor(protected taskGateway: TaskGateway, protected taskGenerator: TaskGeneratorGateway) {}
 
-  async getTaskForDate(datetime: DateTime): Promise<TaskResponse> {
+  async getTaskForToday(): Promise<TaskResponse> {
     let task = await this.taskGateway.findLatest();
 
-    // check if new day
-
-    if (!task) {
+    if (!task || "if day is less than task created_at") {
       const newTask = await this.taskGenerator.generate();
       task = await this.taskGateway.create(newTask.title, newTask.color, newTask.encouragement);
     }
