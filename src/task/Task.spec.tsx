@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { act } from "react-dom/test-utils";
-import { flushPromises } from "../../../tests/helpers"
+import { flushPromises } from "../../tests/helpers"
 import Task from './Task';
 
 let container: any = null;

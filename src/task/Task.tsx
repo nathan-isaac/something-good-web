@@ -1,6 +1,6 @@
 import React, {Component} from "react";
-import {ManageTasksFactory} from "../factory";
-import {ManageTasks, TaskResponse} from "../use_cases/manage_tasks";
+import {ManageTasksFactory} from "./factory";
+import {ManageTasks, TaskResponse} from "./service";
 
 type TaskState = {
   task: {

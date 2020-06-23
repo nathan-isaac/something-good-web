@@ -1,10 +1,10 @@
 import {MathRandomizer} from "./randomizer";
-import {ArrayTaskGateway, Task} from "./gateways/task_gateway";
+import {ArrayTaskGateway, Task} from "./gateways/task";
 import {ArrayColorGateway} from "./gateways/color_gateway";
 import {ArrayEncouragementGateway} from "./gateways/encouragement_gateway";
 import {COLORS, ENCOURAGEMENTS} from "./config";
-import {ManageTasks} from "./use_cases/manage_tasks";
-import {LocalStorageTodaysTaskGateway} from "./gateways/todays_task_gateway";
+import {ManageTasks} from "./service";
+import {LocalStorageTodaysTaskGateway} from "./gateways/todaysTask";
 import {LocalStorageTaskHistoryGateway} from "./gateways/task_history_gateway";
 
 export class ManageTasksFactory {
